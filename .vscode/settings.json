@@ -1,0 +1,37 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "netstat": true,
+        "Copy-Item": true,
+        "Get-Command": true,
+        "where.exe": true,
+        "/^cmd\\.exe /c \"npm -v\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^cmd\\.exe /c \"npm run build\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "%{\"$($_)\"}": true,
+        "/^cmd /c \"findstr /n /r \"\\^\" src\\\\app\\\\page\\.tsx \\| findstr /n /r \"145:\\.\\*\\\\\\|146:\\.\\*\\\\\\|147:\\.\\*\\\\\\|148:\\.\\*\\\\\\|149:\\.\\*\\\\\\|150:\\.\\*\\\\\\|151:\\.\\*\\\\\\|152:\\.\\*\\\\\\|153:\\.\\*\\\\\\|154:\\.\\*\\\\\\|155:\\.\\*\\\\\\|156:\\.\\*\\\\\\|157:\\.\\*\\\\\\|158:\\.\\*\\\\\\|159:\\.\\*\\\\\\|160:\\.\\*\\\\\\|161:\\.\\*\\\\\\|162:\\.\\*\\\\\\|163:\\.\\*\\\\\\|164:\\.\\*\\\\\\|165:\\.\\*\\\\\\|166:\\.\\*\\\\\\|167:\\.\\*\\\\\\|168:\\.\\*\\\\\\|169:\\.\\*\\\\\\|170:\\.\\*\"\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "from": true,
+        "p": true,
+        "p.read_text(encoding='utf-8')": true,
+        "i": true,
+        "print(f'{i}:": true,
+        "line": true,
+        "PY": true,
+        "/^cd \"c:\\\\Users\\\\ALLAH\\\\Desktop\\\\EcoComfort\"; python -c \"from pathlib import Path; p = Path\\('src/app/page\\.tsx'\\); lines = p\\.read_text\\(encoding='utf-8'\\)\\.splitlines\\(\\);\nfor i in range\\(145, 171\\):\n    print\\(f'\\{i\\}: \\{lines\\[i-1\\]\\}'\\)\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "npx next": true,
+        "/^python -c \"from pathlib import Path; p=Path\\('src/app/admin/page\\.tsx'\\); lines=p\\.read_text\\(encoding='utf-8'\\)\\.splitlines\\(\\); import sys; sys\\.stdout\\.write\\('\\\\n'\\.join\\(str\\(j\\+1\\)\\+': '\\+repr\\(lines\\[j\\]\\) for j in range\\(608,623\\)\\)\\)\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}
