@@ -8,6 +8,7 @@ export async function POST(request: NextRequest) {
     const { name, phone, productName, comment } = await request.json();
 
     const source = process.env.BITRIX_SOURCE || 'Website';
+    const sourceId = process.env.BITRIX_SOURCE_ID || 'WEB';
     const selectedProduct = productName || 'Не указан';
     const userComment = comment?.trim() || 'Без комментария';
 
@@ -20,7 +21,8 @@ export async function POST(request: NextRequest) {
         NAME: name,
         PHONE: [{ VALUE: phone, VALUE_TYPE: 'WORK' }],
         COMMENTS: `Источник: ${source}\nТовар: ${selectedProduct}\nКомментарий: ${userComment}`,
-        SOURCE_ID: source,
+        SOURCE_ID: sourceId,
+        SOURCE_DESCRIPTION: source,
         ...(assignedById ? { ASSIGNED_BY_ID: assignedById } : {}),
       },
     };
@@ -50,7 +52,15 @@ export async function POST(request: NextRequest) {
     console.error('Bitrix24 response error:', response.data);
     return NextResponse.json({ error: 'Failed to create lead in Bitrix24' }, { status: 500 });
   } catch (error) {
-    console.error('Error creating lead:', error);
+    if (axios.isAxiosError(error)) {
+      console.error('Error creating lead in Bitrix24:', {
+        status: error.response?.status,
+        data: error.response?.data,
+        message: error.message,
+      });
+    } else {
+      console.error('Error creating lead:', error);
+    }
     return NextResponse.json({ error: 'Failed to create lead' }, { status: 500 });
   }
 }
