@@ -10,11 +10,18 @@ export default async function Home() {
     return null;
   });
 
-  if (cmsContent) {
-    return <HomePageClient initialData={cmsContent} />;
-  }
-
   const products = await getCatalogProducts();
+
+  if (cmsContent) {
+    return (
+      <HomePageClient
+        initialData={{
+          ...cmsContent,
+          products: cmsContent.products.length > 0 ? cmsContent.products : products,
+        }}
+      />
+    );
+  }
 
   return (
     <HomePageClient
