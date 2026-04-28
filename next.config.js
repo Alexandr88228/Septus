@@ -15,7 +15,11 @@ const nextConfig = {
         destination: '/admin/index.html',
       },
       {
-        source: '/admin/:path*',
+        source: '/admin/admin',
+        destination: '/admin/index.html',
+      },
+      {
+        source: '/admin/admin/',
         destination: '/admin/index.html',
       },
     ];
