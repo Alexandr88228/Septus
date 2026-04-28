@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     const selectedProduct = productName || 'Не указан';
     const userComment = comment?.trim() || 'Без комментария';
 
-    const BITRIX_WEBHOOK_URL = getOptionalEnv(process.env.BITRIX_WEBHOOK_URL) || getOptionalEnv(process.env.BITRIX24_WEBHOOK_URL);
+    const BITRIX_WEBHOOK_URL = getWebhookUrl(process.env.BITRIX_WEBHOOK_URL) || getWebhookUrl(process.env.BITRIX24_WEBHOOK_URL);
     const assignedById = getAssignedManagerId(phone);
 
     const leadData = {
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const response = await axios.post(`${BITRIX_WEBHOOK_URL}/crm.lead.add`, leadData, {
+    const response = await axios.post(`${BITRIX_WEBHOOK_URL}/crm.lead.add.json`, leadData, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -77,6 +77,10 @@ function getOptionalEnv(value?: string) {
   const normalized = value?.trim();
   if (!normalized || normalized === 'disabled' || normalized === 'false') return undefined;
   return normalized;
+}
+
+function getWebhookUrl(value?: string) {
+  return getOptionalEnv(value)?.replace(/\/+$/, '');
 }
 
 async function notifyTelegram({

@@ -25,7 +25,7 @@ export default function LeadForm({ productName, theme = 'dark' }: LeadFormProps)
     setMessage('Отправляем заявку...');
 
     try {
-      const endpoint = process.env.NEXT_PUBLIC_LEAD_ENDPOINT || '/api/lead';
+      const endpoint = process.env.NEXT_PUBLIC_LEAD_ENDPOINT || '/api/lead/';
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
