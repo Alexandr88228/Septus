@@ -9,7 +9,7 @@ import { getCatalogProductBySlug, getCatalogProducts, getRelatedCatalogProducts 
 import ProductViewTracker from '../../../components/ProductViewTracker';
 
 export const revalidate = 60;
-export const dynamicParams = true;
+export const dynamicParams = false;
 
 const getSeriesUserCounts = (product: Product) => {
   const name = product.name.toLowerCase();

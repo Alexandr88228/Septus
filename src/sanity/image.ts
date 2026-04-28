@@ -7,11 +7,11 @@ export function urlFor(source: any) {
   return builder.image(source);
 }
 
-export function imageUrl(source: any, fallback = '') {
+export function imageUrl(source: any, fallback = '', width = 900) {
   if (!source) return fallback;
 
   try {
-    return urlFor(source).auto('format').fit('max').url();
+    return urlFor(source).width(width).quality(76).auto('format').fit('max').url();
   } catch {
     return fallback;
   }

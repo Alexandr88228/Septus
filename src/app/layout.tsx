@@ -2,12 +2,19 @@ import './globals.css';
 import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
 import Script from 'next/script';
+import { Manrope } from 'next/font/google';
 import Header from '../components/Header';
 import YandexMetrika from '../components/YandexMetrika';
 import MobileStickyCta from '../components/MobileStickyCta';
 
 const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3002';
-const logoUrl = '/for-site/%D0%9B%D0%BE%D0%B3%D0%BE%D1%82%D0%B8%D0%BF%D1%8B/NanoBanana_zameni-slovo-septus-na-septus_png.png';
+const logoUrl = '/logo.webp';
+const manrope = Manrope({
+  subsets: ['latin', 'cyrillic'],
+  display: 'swap',
+  variable: '--font-manrope',
+  weight: ['400', '500', '600', '700', '800'],
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -65,7 +72,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link rel="apple-touch-icon" href={logoUrl} />
         <Script id="local-business-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
       </head>
-      <body className="min-h-screen font-sans antialiased flex flex-col overflow-x-hidden">
+      <body className={`${manrope.variable} min-h-screen font-sans antialiased flex flex-col overflow-x-hidden`}>
         <YandexMetrika />
         <Header />
 

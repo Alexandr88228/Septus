@@ -2,10 +2,15 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import { useMemo, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
-import LeadForm from './lead-form';
 import { trackGoal } from '../lib/metrika';
+
+const LeadForm = dynamic(() => import('./lead-form'), {
+  ssr: false,
+  loading: () => <div className="rounded-2xl bg-white/10 p-6 text-sm font-semibold text-slate-200">Загружаем форму заявки...</div>,
+});
 
 type HomePageData = {
   homePage: any;
@@ -56,11 +61,17 @@ const defaultBenefits = [
   { title: 'Работаем по СПб и ЛО', description: 'Выезд инженера по городу и области, включая сложные участки.' },
 ];
 
+const defaultImages = {
+  hero: '/catalog-images/biodevays-pro/septik-biodevays-pro.webp',
+  product: '/catalog-images/yunilos-astra/septik-yunilos-astra-5.webp',
+  project: '/catalog-images/topas/septik-topas.webp',
+};
+
 const defaultProjects = [
-  { image: '/photos/photo_9_2026-04-12_13-00-49.jpg', location: 'Всеволожск', model: 'Биодевайс ПРО', duration: 'Монтаж за 1 день', complexity: 'Сложный грунт', result: 'Запуск в день установки' },
-  { image: '/photos/photo_14_2026-04-12_13-00-49.jpg', location: 'Гатчина', model: 'Юнилос Астра', duration: 'Монтаж за 1 день', complexity: 'Высокие грунтовые воды', result: 'Стабильная работа без запаха' },
-  { image: '/photos/photo_23_2026-04-12_13-00-49.jpg', location: 'Пушкин', model: 'Топас', duration: 'Монтаж за 1 день', complexity: 'Ограниченный участок', result: 'Компактное решение под ключ' },
-  { image: '/photos/photo_31_2026-04-12_13-00-49.jpg', location: 'Кудрово', model: 'Волгарь', duration: 'Монтаж за 1 день', complexity: 'Зимний монтаж', result: 'Сдано по договору в срок' },
+  { image: '/catalog-images/biodevays-pro/septik-biodevays-pro.webp', location: 'Всеволожск', model: 'Биодевайс ПРО', duration: 'Монтаж за 1 день', complexity: 'Сложный грунт', result: 'Запуск в день установки' },
+  { image: '/catalog-images/yunilos-astra/septik-yunilos-astra-5.webp', location: 'Гатчина', model: 'Юнилос Астра', duration: 'Монтаж за 1 день', complexity: 'Высокие грунтовые воды', result: 'Стабильная работа без запаха' },
+  { image: '/catalog-images/ital-bio/septik-ital-bio.webp', location: 'Пушкин', model: 'Итал Био', duration: 'Монтаж за 1 день', complexity: 'Ограниченный участок', result: 'Компактное решение под ключ' },
+  { image: '/catalog-images/ital-antey/septik-ital-antey.webp', location: 'Кудрово', model: 'Итал Антей', duration: 'Монтаж за 1 день', complexity: 'Зимний монтаж', result: 'Сдано по договору в срок' },
 ];
 
 const defaultReviews = [
@@ -99,7 +110,6 @@ const soilOptions = [
 
 const waterLevelOptions = [
   { label: 'Низкие грунтовые воды', value: 'low', extra: 0 },
-  { label: 'Средние грунтовые воды', value: 'medium', extra: 8000 },
   { label: 'Высокие грунтовые воды', value: 'high', extra: 18000 },
 ];
 
@@ -152,6 +162,12 @@ function EstimateRow({ label, value, strong = false }: { label: string; value: s
       <span className={strong ? 'text-lg font-black text-emerald-300' : 'font-bold text-white'}>{value}</span>
     </div>
   );
+}
+
+function getProjectModel(project: any) {
+  if (project.location === 'Пушкин') return 'Итал Био';
+  if (project.location === 'Кудрово') return 'Итал Антей';
+  return project.model || 'Биодевайс ПРО';
 }
 
 export default function HomePageClient({ initialData }: { initialData?: HomePageData | null }) {
@@ -266,7 +282,7 @@ export default function HomePageClient({ initialData }: { initialData?: HomePage
           </div>
           <div className="relative rounded-3xl border border-white/70 bg-white/80 p-4 shadow-2xl backdrop-blur md:p-5">
             <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
-              <Image src={homePageContent?.heroImageUrl || '/photos/photo_6_2026-04-12_13-00-49.jpg'} alt={homePageContent?.heroImageAlt || 'Монтаж септика под ключ в Санкт-Петербурге и Ленинградской области'} fill priority sizes="(max-width: 1024px) 100vw, 45vw" className="object-cover object-center" />
+              <Image src={homePageContent?.heroImageUrl || defaultImages.hero} alt={homePageContent?.heroImageAlt || 'Монтаж септика под ключ в Санкт-Петербурге и Ленинградской области'} fill priority sizes="(max-width: 1024px) 100vw, 45vw" className="object-cover object-center" />
             </div>
             <div className="mt-4 grid gap-2 sm:grid-cols-2">
               {['Бесплатный выезд инженера', 'Сертифицированное оборудование', 'Подбор под участок за 5 минут', 'Без скрытых доплат'].map((point) => (
@@ -307,7 +323,7 @@ export default function HomePageClient({ initialData }: { initialData?: HomePage
           {(popularProducts.length > 0 ? popularProducts.slice(0, 3) : catalogModels.slice(0, 3)).map((product: any, index) => (
             <article key={product.id || product.title} className="flex h-full flex-col rounded-3xl border border-slate-200 bg-white p-5 shadow-soft transition hover:-translate-y-1 hover:shadow-medium">
               <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-slate-50">
-                <Image src={(product.images && product.images[0]) || '/photos/photo_5_2026-04-12_13-00-49.jpg'} alt={product.name || product.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-contain p-4" />
+                <Image src={(product.images && product.images[0]) || defaultImages.product} alt={product.name || product.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-contain p-4" />
                 <span className="absolute left-3 top-3 rounded-full bg-slate-900/85 px-3 py-1 text-xs font-semibold text-white">{index === 0 ? 'Хит' : index === 1 ? 'Лучший выбор' : 'Для семьи'}</span>
               </div>
               <div className="flex flex-1 flex-col">
@@ -381,7 +397,7 @@ export default function HomePageClient({ initialData }: { initialData?: HomePage
             </div>
           </div>
 
-          <div className="rounded-3xl bg-[#0b1734] p-8 text-white shadow-2xl animate-slide-in-right md:p-12">
+          <div className="rounded-3xl bg-[#0b1734] p-8 text-white shadow-2xl animate-slide-in-right md:p-12 lg:sticky lg:top-36 lg:self-start">
             <div className="flex flex-col gap-8">
               <div>
                 <p className="text-sm uppercase tracking-wider text-[#84b827] font-bold">Стоимость септика под ключ</p>
@@ -427,12 +443,12 @@ export default function HomePageClient({ initialData }: { initialData?: HomePage
             {(projects.length > 0 ? projects.slice(0, 4) : defaultProjects).map((project: any) => (
               <article key={project.id || project.image} className="flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-soft transition hover:-translate-y-1 hover:shadow-medium">
                 <div className="relative h-56 w-full">
-                  <Image src={project.image?.startsWith('/') ? project.image : '/photos/photo_1_2026-04-12_13-00-49.jpg'} alt={project.location || 'Кейс монтажа'} fill sizes="(max-width: 768px) 100vw, 25vw" className="object-cover" />
+                  <Image src={project.image?.startsWith('/') ? project.image : defaultImages.project} alt={project.location || 'Кейс монтажа'} fill sizes="(max-width: 768px) 100vw, 25vw" className="object-cover" />
                 </div>
                 <div className="flex flex-1 flex-col p-6">
                   <p className="text-xl font-extrabold text-slate-900">{project.location}</p>
                   <div className="mt-3 space-y-2 text-base leading-relaxed text-slate-600">
-                    <p><span className="font-semibold text-slate-800">Модель:</span> {project.model || 'Биодевайс ПРО'}</p>
+                    <p><span className="font-semibold text-slate-800">Модель:</span> {getProjectModel(project)}</p>
                     <p><span className="font-semibold text-slate-800">Срок:</span> {project.duration || 'Монтаж за 1 день'}</p>
                   </div>
                 </div>

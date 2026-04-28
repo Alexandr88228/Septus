@@ -8,9 +8,10 @@
     "prebuild": "node scripts/prepare-catalog-assets.js",
     "build": "npm run build:studio && next build",
     "build:app": "next build",
+    "build:static": "npm run prebuild && set NEXT_OUTPUT=export&& next build",
     "build:studio": "sanity build public/admin --yes && node scripts/fix-sanity-admin-assets.js public/admin",
     "build:all": "npm run build",
-    "export": "echo Static export is disabled. Use npm run build for SSR/ISR deployment.",
+    "export": "npm run build:static",
     "start": "next start -p 3002",
     "lint": "next lint",
     "studio": "sanity dev --port 3333"

@@ -515,7 +515,7 @@ function toSlug(value: string): string {
 }
 
 function buildImageUrl(folder: string, file: string): string {
-  return `/catalog-images/${toSlug(folder)}/${encodeURIComponent(file)}`;
+  return `/catalog-images/${toSlug(folder)}/${toSlug(path.parse(file).name)}.webp`;
 }
 
 function productReference(input: Omit<CatalogReference, 'price' | 'description' | 'capacity'> & { description?: string }): CatalogReference {

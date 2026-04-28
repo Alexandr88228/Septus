@@ -1,5 +1,4 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap');
-@import "tailwindcss";
+﻿@import "tailwindcss";
 
 @theme {
   --color-emerald-25: #f9fcf2;
@@ -51,7 +50,7 @@
 
   body {
     min-height: 100vh;
-    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: var(--font-manrope), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: var(--surface);
     color: var(--text-primary);
     text-rendering: optimizeLegibility;

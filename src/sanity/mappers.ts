@@ -6,7 +6,7 @@ export function mapSanityProducts(rows: any[] = []): Product[] {
     .filter((row) => row?.name && row?.slug?.current)
     .map((row) => {
       const images = Array.isArray(row.images)
-        ? row.images.map((image: any) => imageUrl(image)).filter(Boolean)
+        ? row.images.map((image: any) => imageUrl(image, '', 900)).filter(Boolean)
         : [];
 
       return {
@@ -49,7 +49,7 @@ export function mapSanityProducts(rows: any[] = []): Product[] {
 export function mapHomeProjects(rows: any[] = []) {
   return rows.map((row) => ({
     ...row,
-    image: imageUrl(row.image, row.image || ''),
+    image: imageUrl(row.image, row.image || '', 800),
   }));
 }
 

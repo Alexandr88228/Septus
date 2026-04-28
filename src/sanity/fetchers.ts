@@ -1,10 +1,11 @@
+import { unstable_cache } from 'next/cache';
 import { client } from './client';
 import { imageUrl } from './image';
 import { hasSanityConfig } from './env';
 import { homePageQuery, productsQuery, reviewsQuery } from './queries';
 import { mapHomeProjects, mapReviews, mapSanityProducts } from './mappers';
 
-export async function fetchSanitySiteContent() {
+async function fetchSanitySiteContentUncached() {
   if (!hasSanityConfig) {
     return null;
   }
@@ -19,7 +20,7 @@ export async function fetchSanitySiteContent() {
     homePage: homePage
       ? {
           ...homePage,
-          heroImageUrl: imageUrl(homePage.heroImage),
+          heroImageUrl: imageUrl(homePage.heroImage, '', 1200),
           heroImageAlt: homePage.heroImage?.alt,
         }
       : null,
@@ -30,3 +31,7 @@ export async function fetchSanitySiteContent() {
     reviews: mapReviews(reviews),
   };
 }
+
+export const fetchSanitySiteContent = unstable_cache(fetchSanitySiteContentUncached, ['sanity-site-content'], {
+  revalidate: 60,
+});

@@ -3,7 +3,20 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import RevealWrapper from '../../components/RevealWrapper';
 
-const photoNames = Array.from({ length: 36 }, (_, index) => `photo_${index + 1}_2026-04-12_13-00-49.jpg`);
+const galleryImages = [
+  '/catalog-images/biodevays-pro/septik-biodevays-pro.webp',
+  '/catalog-images/yunilos-astra/septik-yunilos-astra-5.webp',
+  '/catalog-images/topas/septik-topas.webp',
+  '/catalog-images/evrobion/septik-volgar.webp',
+  '/catalog-images/grinlos/septik-grinlos.webp',
+  '/catalog-images/aeroboks/septik-aeroboks.webp',
+  '/catalog-images/kolovesi/septik-kolovesi.webp',
+  '/catalog-images/kit-bio/septik-kit-bio.webp',
+  '/catalog-images/dalos/septik-dalos.webp',
+  '/catalog-images/atlos/septik-atlos.webp',
+  '/catalog-images/ital-antey/septik-ital-antey.webp',
+  '/catalog-images/vodanoff/septik-vodanoff.webp',
+];
 
 export const metadata: Metadata = {
   title: 'Галерея кейсов: монтажи септиков',
@@ -27,15 +40,15 @@ export default function GalleryPage() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {photoNames.map((photo) => (
-            <div key={photo} className="overflow-hidden rounded-[1.5rem] bg-white shadow-sm">
+          {galleryImages.map((image, index) => (
+            <div key={image} className="overflow-hidden rounded-[1.5rem] bg-white shadow-sm">
               <Image
-                src={`/photos/${photo}`}
-                alt={`Монтаж септика Септус: объект ${photo}`}
+                src={image}
+                alt={`Монтаж септика Септус: объект ${index + 1}`}
                 width={480}
                 height={360}
                 loading="lazy"
-                className="h-56 w-full object-cover transition duration-300 hover:scale-105"
+                className="h-56 w-full object-contain p-4 transition duration-300 hover:scale-105"
               />
             </div>
           ))}

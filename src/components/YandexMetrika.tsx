@@ -6,6 +6,7 @@ import { getMetrikaId, trackGoal } from '../lib/metrika';
 
 export default function YandexMetrika() {
   const id = getMetrikaId();
+  const webvisor = process.env.NEXT_PUBLIC_YANDEX_METRIKA_WEBVISOR === 'true';
   const hit50 = useRef(false);
   const hit90 = useRef(false);
 
@@ -42,7 +43,7 @@ export default function YandexMetrika() {
           for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
           k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
           (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-          ym(${id}, "init", { clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true });
+          ym(${id}, "init", { clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:${webvisor} });
         `}
       </Script>
       <noscript>

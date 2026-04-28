@@ -1,10 +1,11 @@
+import { unstable_cache } from 'next/cache';
 import { client } from '../sanity/client';
 import { hasSanityConfig } from '../sanity/env';
 import { mapSanityProducts } from '../sanity/mappers';
 import { productsQuery } from '../sanity/queries';
 import { getProductsFromFolder, type Product } from './products';
 
-async function getSanityProducts(): Promise<Product[]> {
+async function getSanityProductsUncached(): Promise<Product[]> {
   if (!hasSanityConfig) return [];
 
   try {
@@ -15,7 +16,11 @@ async function getSanityProducts(): Promise<Product[]> {
   }
 }
 
-export async function getCatalogProducts(): Promise<Product[]> {
+const getSanityProducts = unstable_cache(getSanityProductsUncached, ['sanity-products'], {
+  revalidate: 60,
+});
+
+async function getCatalogProductsUncached(): Promise<Product[]> {
   const [sanityProducts, localProducts] = await Promise.all([
     getSanityProducts(),
     getProductsFromFolder(),
@@ -31,6 +36,10 @@ export async function getCatalogProducts(): Promise<Product[]> {
 
   return Array.from(productsBySlug.values()).sort((a, b) => a.name.localeCompare(b.name, 'ru'));
 }
+
+export const getCatalogProducts = unstable_cache(getCatalogProductsUncached, ['catalog-products'], {
+  revalidate: 60,
+});
 
 export async function getCatalogProductBySlug(slug: string): Promise<Product | null> {
   const products = await getCatalogProducts();

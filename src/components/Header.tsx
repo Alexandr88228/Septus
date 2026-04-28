@@ -2,10 +2,10 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
-import { FaTelegramPlane, FaVk, FaWhatsapp } from 'react-icons/fa';
+import type { SVGProps } from 'react';
 import { trackGoal } from '../lib/metrika';
 
-const logoSrc = '/for-site/%D0%9B%D0%BE%D0%B3%D0%BE%D1%82%D0%B8%D0%BF%D1%8B/NanoBanana_zameni-slovo-septus-na-septus_png.png';
+const logoSrc = '/logo.webp';
 
 const septicMenu = [
   { label: 'Евролос БИО', href: '/catalog/evrolos-bio' },
@@ -21,6 +21,30 @@ const septicMenu = [
   { label: 'КИТ Био', href: '/catalog/kit-bio' },
   { label: 'Аэробокс', href: '/catalog/aeroboks' },
 ];
+
+function TelegramIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}>
+      <path d="M21.9 4.6 18.7 19.7c-.2 1.1-.9 1.4-1.8.9l-5-3.7-2.4 2.3c-.3.3-.5.5-1 .5l.4-5.1 9.3-8.4c.4-.4-.1-.6-.6-.2L6.1 13.2 1.2 11.7c-1.1-.3-1.1-1.1.2-1.6L20.5 2.7c.9-.3 1.7.2 1.4 1.9Z" />
+    </svg>
+  );
+}
+
+function VkIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}>
+      <path d="M12.8 17.7c-6.2 0-9.8-4.3-10-11.4h3.1c.1 5.2 2.4 7.4 4.2 7.9V6.3h2.9v4.5c1.8-.2 3.6-2.2 4.2-4.5h2.9c-.4 2.8-2.3 4.8-3.6 5.6 1.3.7 3.4 2.4 4.2 5.8h-3.2c-.6-2.2-2.3-3.9-4.5-4.2v4.2h-.2Z" />
+    </svg>
+  );
+}
+
+function WhatsAppIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}>
+      <path d="M12 2a9.8 9.8 0 0 0-8.5 14.8L2.3 22l5.3-1.4A9.8 9.8 0 1 0 12 2Zm0 17.9a8 8 0 0 1-4.1-1.1l-.3-.2-3.1.8.8-3-.2-.3A8.1 8.1 0 1 1 12 19.9Zm4.4-6c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.6.1-.2.2-.7.8-.8 1-.1.2-.3.2-.5.1a6.6 6.6 0 0 1-3.3-2.9c-.2-.3 0-.4.1-.6l.4-.5c.1-.2.1-.4 0-.5l-.7-1.7c-.2-.4-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.2-.9.8-.9 2 0 1.2.9 2.3 1 2.5.1.2 1.8 2.8 4.4 3.9.6.3 1.1.4 1.5.5.6.2 1.2.2 1.6.1.5-.1 1.4-.6 1.6-1.1.2-.5.2-1 .1-1.1-.1-.2-.3-.2-.5-.3Z" />
+    </svg>
+  );
+}
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -41,13 +65,13 @@ export default function Header() {
           <span>Ежедневно с 09:00 до 21:00 · СПб и Ленинградская область</span>
           <div className="flex items-center gap-2">
             <a href="https://t.me/" target="_blank" rel="noreferrer" aria-label="Telegram" className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-[#84b827]">
-              <FaTelegramPlane className="h-4 w-4" />
+              <TelegramIcon className="h-4 w-4" />
             </a>
             <a href="https://vk.com/" target="_blank" rel="noreferrer" aria-label="VK" className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-[#84b827]">
-              <FaVk className="h-4 w-4" />
+              <VkIcon className="h-4 w-4" />
             </a>
             <a href="https://wa.me/78005553535" target="_blank" rel="noreferrer" aria-label="WhatsApp" onClick={() => trackGoal('click_whatsapp')} className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-[#84b827]">
-              <FaWhatsapp className="h-4 w-4" />
+              <WhatsAppIcon className="h-4 w-4" />
             </a>
             <a href="https://max.ru/" target="_blank" rel="noreferrer" aria-label="Max" className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-[10px] font-black text-white transition hover:bg-[#84b827]">
               MAX
