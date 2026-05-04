@@ -2,7 +2,8 @@
 import { fetchSanitySiteContent } from '../sanity/fetchers';
 import { getCatalogProducts } from '../lib/catalog-data';
 
-export const revalidate = 60;
+export const dynamic = 'force-static';
+export const revalidate = 86400;
 
 export default async function Home() {
   const cmsContent = await fetchSanitySiteContent().catch((error) => {

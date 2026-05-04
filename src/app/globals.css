@@ -73,6 +73,11 @@
     max-width: 100%;
     height: auto;
   }
+
+  section:not(#home) {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 720px;
+  }
 }
 
 @layer components {

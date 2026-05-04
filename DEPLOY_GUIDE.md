@@ -33,16 +33,15 @@ npm run start
 
 ## 4. Рекомендуемый деплой
 
-Рекомендуемый вариант для текущей архитектуры — Vercel или другой Node.js-хостинг с поддержкой Next.js SSR/ISR.
+Рекомендуемый вариант для текущей архитектуры — собственный Node.js-хостинг (VPS или выделенный сервер) с поддержкой Next.js SSR/ISR.
 
-Для Vercel:
+Базовая схема:
 
-1. Подключите репозиторий.
-2. Build command: `npm run build`.
-3. Framework preset: `Next.js`.
-4. Укажите production env variables.
-5. Сначала проверьте Preview Deployment.
-6. После проверки переключайте домен.
+1. `npm run build`
+2. `npm run start` (или через PM2/systemd)
+3. Nginx как reverse proxy на порт приложения
+4. Production env variables на сервере
+5. Проверка прода до переключения домена
 
 ## 5. Обязательные env variables
 
@@ -152,11 +151,11 @@ CNAME www your-domain.ru
 
 Статическая папка `out` не умеет выполнять серверный код сама по себе. Поэтому для заявок есть 2 production-варианта:
 
-1. Разместить сайт на Node/Vercel-хостинге и использовать `/api/lead`.
-2. Для обычного статического хостинга указать внешний endpoint в `.env.local` перед сборкой:
+1. Разместить сайт на Node.js-хостинге и использовать локальный `/api/lead`.
+2. Для обычного статического хостинга потребуется отдельный backend endpoint перед сборкой:
 
 ```env
-NEXT_PUBLIC_LEAD_ENDPOINT=https://your-api.example.com/lead
+LEAD_ENDPOINT=https://your-api.example.com/lead
 ```
 
 Этот endpoint должен принять POST-запрос формы и отправить лид в Bitrix24, Telegram или email.

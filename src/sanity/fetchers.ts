@@ -4,6 +4,7 @@ import { imageUrl } from './image';
 import { hasSanityConfig } from './env';
 import { homePageQuery, productsQuery, reviewsQuery } from './queries';
 import { mapHomeProjects, mapReviews, mapSanityProducts } from './mappers';
+import { PUBLIC_PAGE_REVALIDATE_SECONDS } from '../lib/cache';
 
 async function fetchSanitySiteContentUncached() {
   if (!hasSanityConfig) {
@@ -33,5 +34,5 @@ async function fetchSanitySiteContentUncached() {
 }
 
 export const fetchSanitySiteContent = unstable_cache(fetchSanitySiteContentUncached, ['sanity-site-content'], {
-  revalidate: 60,
+  revalidate: PUBLIC_PAGE_REVALIDATE_SECONDS,
 });

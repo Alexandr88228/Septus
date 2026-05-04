@@ -1,0 +1,54 @@
+# Деплой на VPS по SSH после пуша в main (или вручную: Actions → Deploy VPS → Run workflow).
+#
+# Секреты репозитория (Settings → Secrets and variables → Actions):
+#   SSH_HOST        — 217.18.60.62
+#   SSH_USER        — root (лучше позже отдельный пользователь deploy)
+#   SSH_PRIVATE_KEY — приватный ключ (весь файл id_ed25519, НЕ .pub)
+#   DEPLOY_PATH     — опционально, по умолчанию /var/www/septus
+#
+# На сервере один раз: git clone, .env, npm ci, build, pm2, nginx, certbot — см. deploy/server-setup.sh
+
+name: Deploy VPS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-vps
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script_stop: true
+          script: |
+            set -euo pipefail
+            DEPLOY_PATH="${{ secrets.DEPLOY_PATH }}"
+            if [ -z "$DEPLOY_PATH" ]; then DEPLOY_PATH="/var/www/septus"; fi
+            if [ ! -d "$DEPLOY_PATH/.git" ]; then
+              echo "Нет git-репозитория в $DEPLOY_PATH — сначала клонируйте проект на сервере."
+              exit 1
+            fi
+            cd "$DEPLOY_PATH"
+            git fetch --prune origin
+            BRANCH="${{ github.ref_name }}"
+            git checkout "$BRANCH"
+            git reset --hard "origin/$BRANCH"
+            npm ci
+            npm run build
+            if pm2 describe septus >/dev/null 2>&1; then
+              pm2 reload deploy/ecosystem.config.cjs --update-env
+            else
+              pm2 start deploy/ecosystem.config.cjs
+            fi
+            pm2 save

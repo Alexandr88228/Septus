@@ -3,7 +3,18 @@ import axios from 'axios';
 
 export const runtime = 'nodejs';
 
+export async function OPTIONS(request: NextRequest) {
+  return new NextResponse(null, {
+    status: 204,
+    headers: getCorsHeaders(request),
+  });
+}
+
 export async function POST(request: NextRequest) {
+  if (!isOriginAllowed(request)) {
+    return jsonResponse(request, { error: 'Origin is not allowed' }, 403);
+  }
+
   try {
     const { name, phone, productName, comment } = await request.json();
 
@@ -31,7 +42,7 @@ export async function POST(request: NextRequest) {
 
     if (!BITRIX_WEBHOOK_URL) {
       console.warn('Bitrix24 webhook is not configured. Lead accepted locally but was not sent to CRM.');
-      return NextResponse.json({
+      return jsonResponse(request, {
         success: true,
         accepted: true,
         crmConfigured: false,
@@ -46,11 +57,11 @@ export async function POST(request: NextRequest) {
     });
 
     if (response.data?.result) {
-      return NextResponse.json({ success: true, leadId: response.data.result, message: 'Lead created successfully in Bitrix24' });
+      return jsonResponse(request, { success: true, leadId: response.data.result, message: 'Lead created successfully in Bitrix24' });
     }
 
     console.error('Bitrix24 response error:', response.data);
-    return NextResponse.json({ error: 'Failed to create lead in Bitrix24' }, { status: 500 });
+    return jsonResponse(request, { error: 'Failed to create lead in Bitrix24' }, 500);
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error('Error creating lead in Bitrix24:', {
@@ -61,8 +72,45 @@ export async function POST(request: NextRequest) {
     } else {
       console.error('Error creating lead:', error);
     }
-    return NextResponse.json({ error: 'Failed to create lead' }, { status: 500 });
+    return jsonResponse(request, { error: 'Failed to create lead' }, 500);
   }
+}
+
+function jsonResponse(request: NextRequest, body: Record<string, unknown>, status = 200) {
+  return NextResponse.json(body, {
+    status,
+    headers: getCorsHeaders(request),
+  });
+}
+
+function getCorsHeaders(request: NextRequest) {
+  const origin = request.headers.get('origin');
+  const headers: Record<string, string> = {
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Max-Age': '86400',
+  };
+
+  if (!origin || isAllowedOrigin(origin)) {
+    headers['Access-Control-Allow-Origin'] = origin || '*';
+    headers.Vary = 'Origin';
+  }
+
+  return headers;
+}
+
+function isOriginAllowed(request: NextRequest) {
+  const origin = request.headers.get('origin');
+  return !origin || isAllowedOrigin(origin);
+}
+
+function isAllowedOrigin(origin: string) {
+  const allowedOrigins = (process.env.LEAD_ALLOWED_ORIGINS || 'https://www.septus.ru,https://septus.ru,http://localhost:3002,http://localhost:3000')
+    .split(',')
+    .map((value) => value.trim())
+    .filter(Boolean);
+
+  return allowedOrigins.includes('*') || allowedOrigins.includes(origin);
 }
 
 function getAssignedManagerId(phone: string): number | null {

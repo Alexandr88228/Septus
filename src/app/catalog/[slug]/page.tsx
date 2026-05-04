@@ -8,7 +8,8 @@ import type { Product } from '../../../lib/products';
 import { getCatalogProductBySlug, getCatalogProducts, getRelatedCatalogProducts } from '../../../lib/catalog-data';
 import ProductViewTracker from '../../../components/ProductViewTracker';
 
-export const revalidate = 60;
+export const dynamic = 'force-static';
+export const revalidate = 86400;
 export const dynamicParams = false;
 
 const getSeriesUserCounts = (product: Product) => {

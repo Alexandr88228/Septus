@@ -1,13 +1,12 @@
 node_modules
+.next
+out
+.git
 .env
 .env.local
 .env.*.local
-.next
-out
-public/admin
 .sanity
 tsconfig.tsbuildinfo
 *.zip
 EcoComfort
-
-.vercel
+public/admin

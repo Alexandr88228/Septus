@@ -1,13 +1,15 @@
 /** @type {import('next').NextConfig} */
+const isStaticExport = process.env.NEXT_OUTPUT === 'export';
+
 const nextConfig = {
   trailingSlash: true,
-  ...(process.env.NEXT_OUTPUT === 'export' ? { output: 'export' } : {}),
+  ...(isStaticExport ? { output: 'export' } : {}),
   poweredByHeader: false,
   experimental: {
     optimizePackageImports: ['@heroicons/react', 'react-icons'],
   },
   images: {
-    unoptimized: true,
+    unoptimized: isStaticExport,
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 60 * 60 * 24 * 30,
     deviceSizes: [360, 640, 768, 1024, 1280, 1536],
@@ -18,6 +20,37 @@ const nextConfig = {
         hostname: 'cdn.sanity.io',
       },
     ],
+  },
+  async headers() {
+    return [
+      {
+        source: '/catalog-images/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/for-site/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/logo.webp',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+    ];
   },
   async rewrites() {
     return [

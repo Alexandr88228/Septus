@@ -1,10 +1,10 @@
 import type { MetadataRoute } from 'next';
 import { getCatalogProducts } from '../lib/catalog-data';
 
-export const revalidate = 60;
+export const revalidate = 86400;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3002';
+  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.septus.ru';
   const products = await getCatalogProducts();
   const staticRoutes: MetadataRoute.Sitemap = [
     '',

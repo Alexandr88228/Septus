@@ -108,4 +108,4 @@ npm run build
 public/admin
 ```
 
-Production-деплой выполняется как Next.js SSR/ISR приложение на Vercel или Node.js-хостинге. Папка `out` больше не используется как production-артефакт.
+Production-деплой выполняется как Next.js SSR/ISR приложение на собственном Node.js-хостинге. Папка `out` больше не используется как production-артефакт.

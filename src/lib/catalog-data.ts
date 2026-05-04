@@ -3,6 +3,7 @@ import { client } from '../sanity/client';
 import { hasSanityConfig } from '../sanity/env';
 import { mapSanityProducts } from '../sanity/mappers';
 import { productsQuery } from '../sanity/queries';
+import { PUBLIC_PAGE_REVALIDATE_SECONDS } from './cache';
 import { getProductsFromFolder, type Product } from './products';
 
 async function getSanityProductsUncached(): Promise<Product[]> {
@@ -17,7 +18,7 @@ async function getSanityProductsUncached(): Promise<Product[]> {
 }
 
 const getSanityProducts = unstable_cache(getSanityProductsUncached, ['sanity-products'], {
-  revalidate: 60,
+  revalidate: PUBLIC_PAGE_REVALIDATE_SECONDS,
 });
 
 async function getCatalogProductsUncached(): Promise<Product[]> {
@@ -38,7 +39,7 @@ async function getCatalogProductsUncached(): Promise<Product[]> {
 }
 
 export const getCatalogProducts = unstable_cache(getCatalogProductsUncached, ['catalog-products'], {
-  revalidate: 60,
+  revalidate: PUBLIC_PAGE_REVALIDATE_SECONDS,
 });
 
 export async function getCatalogProductBySlug(slug: string): Promise<Product | null> {

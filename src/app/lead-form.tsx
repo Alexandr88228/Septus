@@ -23,10 +23,9 @@ export default function LeadForm({ productName, theme = 'dark' }: LeadFormProps)
   const onSubmit = async (data: LeadFormData) => {
     setStatus('sending');
     setMessage('Отправляем заявку...');
-    const configuredEndpoint = process.env.NEXT_PUBLIC_LEAD_ENDPOINT?.trim();
+    const endpoint = getDefaultLeadEndpoint();
 
     try {
-      const endpoint = configuredEndpoint || '/api/lead/';
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -48,30 +47,13 @@ export default function LeadForm({ productName, theme = 'dark' }: LeadFormProps)
         trackGoal('submit_lead', { productName: productName || 'Общий расчет' });
         reset();
         setIsPopupVisible(true);
-      } else if (!configuredEndpoint) {
-        openFallbackContact(data, productName);
-        setStatus('success');
-        setMessage('Открыли WhatsApp для отправки заявки.');
-        trackGoal('submit_lead_fallback', { productName: productName || 'Общий расчет' });
-        reset();
-        setIsPopupVisible(true);
       } else {
         setStatus('error');
         setMessage(result.error || 'Ошибка отправки. Повторите попытку позже.');
       }
     } catch (error) {
-      if (!configuredEndpoint) {
-        openFallbackContact(data, productName);
-        setStatus('success');
-        setMessage('Открыли WhatsApp для отправки заявки.');
-        trackGoal('submit_lead_fallback', { productName: productName || 'Общий расчет' });
-        reset();
-        setIsPopupVisible(true);
-        return;
-      }
-
       setStatus('error');
-      setMessage('Форма не смогла отправить заявку. Проверьте NEXT_PUBLIC_LEAD_ENDPOINT или серверный API.');
+      setMessage('Форма не смогла отправить заявку. Проверьте локальный серверный API /api/lead/.');
     }
   };
 
@@ -145,14 +127,6 @@ export default function LeadForm({ productName, theme = 'dark' }: LeadFormProps)
   );
 }
 
-function openFallbackContact(data: LeadFormData, productName?: string) {
-  const phone = process.env.NEXT_PUBLIC_WHATSAPP_PHONE || '78005553535';
-  const text = [
-    'Здравствуйте! Хочу получить расчет септика.',
-    `Имя: ${data.name}`,
-    `Телефон: ${data.phone}`,
-    `Товар: ${productName || 'Общий расчет'}`,
-  ].join('\n');
-
-  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
+function getDefaultLeadEndpoint() {
+  return '/api/lead/';
 }

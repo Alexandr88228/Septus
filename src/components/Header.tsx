@@ -70,7 +70,7 @@ export default function Header() {
             <a href="https://vk.com/" target="_blank" rel="noreferrer" aria-label="VK" className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-[#84b827]">
               <VkIcon className="h-4 w-4" />
             </a>
-            <a href="https://wa.me/78005553535" target="_blank" rel="noreferrer" aria-label="WhatsApp" onClick={() => trackGoal('click_whatsapp')} className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-[#84b827]">
+            <a href="https://wa.me/79944283029" target="_blank" rel="noreferrer" aria-label="WhatsApp" onClick={() => trackGoal('click_whatsapp')} className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-[#84b827]">
               <WhatsAppIcon className="h-4 w-4" />
             </a>
             <a href="https://max.ru/" target="_blank" rel="noreferrer" aria-label="Max" className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-[10px] font-black text-white transition hover:bg-[#84b827]">
@@ -83,7 +83,7 @@ export default function Header() {
       <div className="container mx-auto flex items-center justify-between gap-4 px-4 py-3">
         <Link href="/" className="flex min-w-0 items-center gap-4 text-slate-950">
           <span className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-white shadow-md ring-1 ring-slate-100 md:h-24 md:w-24">
-            <Image src={logoSrc} alt="Логотип Септус" fill className="scale-[1.45] object-cover object-top" priority sizes="96px" />
+            <Image src={logoSrc} alt="Логотип Септус" fill className="scale-[1.45] object-cover object-top" sizes="96px" />
           </span>
           <div className="min-w-0">
             <p className="text-2xl font-black uppercase leading-none tracking-tight text-[#0b1734] md:text-3xl">СЕПТУС</p>
@@ -92,7 +92,7 @@ export default function Header() {
         </Link>
 
         <div className="hidden items-center gap-5 lg:flex">
-          <a href="tel:88005553535" onClick={() => trackGoal('click_phone')} className="inline-flex min-w-[12rem] items-center justify-center rounded-full bg-black px-5 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-[#0b1734]">8 800 555-35-35</a>
+          <a href="tel:+79944283029" onClick={() => trackGoal('click_phone')} className="inline-flex min-w-[12rem] items-center justify-center rounded-full bg-black px-5 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-[#0b1734]">8 994 428-30-29</a>
           <Link href="/#lead" className="inline-flex items-center justify-center rounded-full bg-[#84b827] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-[#6d981f]">Заказать замер бесплатно</Link>
         </div>
 
@@ -170,9 +170,9 @@ export default function Header() {
             <div className="grid grid-cols-3 gap-2">
               <a href="https://t.me/" target="_blank" rel="noreferrer" className="rounded-xl border border-slate-200 px-3 py-3 text-center text-sm font-bold text-slate-700">TG</a>
               <a href="https://vk.com/" target="_blank" rel="noreferrer" className="rounded-xl border border-slate-200 px-3 py-3 text-center text-sm font-bold text-slate-700">VK</a>
-              <a href="https://wa.me/78005553535" target="_blank" rel="noreferrer" onClick={() => trackGoal('click_whatsapp')} className="rounded-xl border border-slate-200 px-3 py-3 text-center text-sm font-bold text-slate-700">WA</a>
+              <a href="https://wa.me/79944283029" target="_blank" rel="noreferrer" onClick={() => trackGoal('click_whatsapp')} className="rounded-xl border border-slate-200 px-3 py-3 text-center text-sm font-bold text-slate-700">WA</a>
             </div>
-            <a href="tel:88005553535" onClick={() => trackGoal('click_phone')} className="block rounded-xl bg-black px-4 py-3 text-center text-base font-bold text-white">8 800 555-35-35</a>
+            <a href="tel:+79944283029" onClick={() => trackGoal('click_phone')} className="block rounded-xl bg-black px-4 py-3 text-center text-base font-bold text-white">8 994 428-30-29</a>
             <Link href="/#lead" onClick={() => setMobileMenuOpen(false)} className="block rounded-xl bg-secondary px-4 py-3 text-center text-base font-extrabold text-white">Заказать замер бесплатно</Link>
           </div>
         </div>

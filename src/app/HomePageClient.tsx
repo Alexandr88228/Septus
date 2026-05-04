@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { trackGoal } from '../lib/metrika';
 
@@ -184,22 +184,6 @@ export default function HomePageClient({ initialData }: { initialData?: HomePage
   const [faqs, setFaqs] = useState<any[]>(initialData?.faqs ?? []);
   const [homePageContent, setHomePageContent] = useState<any>(initialData?.homePage ?? null);
 
-  useEffect(() => {
-    if (initialData) return;
-
-    const loadData = async () => {
-      try {
-        const productsResponse = await fetch('/api/products');
-        const localProducts = await productsResponse.json();
-        setProducts(Array.isArray(localProducts) ? localProducts : []);
-      } catch (fallbackError) {
-        console.error('Fallback products loading failed:', fallbackError);
-      }
-    };
-
-    loadData();
-  }, [initialData]);
-
   const estimate = useMemo(() => {
     const selectedPeople = peopleOptions.find((item) => item.value === people) ?? peopleOptions[1];
     const selectedResidence = residenceOptions.find((item) => item.value === residence) ?? residenceOptions[0];
@@ -262,9 +246,9 @@ export default function HomePageClient({ initialData }: { initialData?: HomePage
 
   return (
     <div className="space-y-16 pb-20">
-      <section id="home" className="relative overflow-hidden rounded-[2.5rem] border border-slate-200/70 bg-gradient-to-br from-white via-slate-50 to-emerald-50 px-5 py-12 md:px-10 md:py-16">
-        <div className="pointer-events-none absolute -top-20 -right-10 h-80 w-80 rounded-full bg-emerald-300/20 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-10 -left-10 h-72 w-72 rounded-full bg-sky-200/20 blur-3xl" />
+      <section id="home" className="relative overflow-hidden rounded-[2rem] border border-slate-200/70 bg-white px-5 py-10 md:rounded-[2.5rem] md:bg-gradient-to-br md:from-white md:via-slate-50 md:to-emerald-50 md:px-10 md:py-16">
+        <div className="pointer-events-none absolute -top-20 -right-10 hidden h-80 w-80 rounded-full bg-emerald-300/20 blur-3xl md:block" />
+        <div className="pointer-events-none absolute -bottom-10 -left-10 hidden h-72 w-72 rounded-full bg-sky-200/20 blur-3xl md:block" />
         <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="space-y-7">
             <span className="inline-flex items-center rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-slate-600">{homePageContent?.heroBadge || 'Работа по договору | СПб и ЛО'}</span>
@@ -280,9 +264,9 @@ export default function HomePageClient({ initialData }: { initialData?: HomePage
               ))}
             </div>
           </div>
-          <div className="relative rounded-3xl border border-white/70 bg-white/80 p-4 shadow-2xl backdrop-blur md:p-5">
+          <div className="relative rounded-3xl border border-white/70 bg-white p-4 shadow-md md:bg-white/80 md:p-5 md:shadow-2xl md:backdrop-blur">
             <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
-              <Image src={homePageContent?.heroImageUrl || defaultImages.hero} alt={homePageContent?.heroImageAlt || 'Монтаж септика под ключ в Санкт-Петербурге и Ленинградской области'} fill priority sizes="(max-width: 1024px) 100vw, 45vw" className="object-cover object-center" />
+              <Image src={homePageContent?.heroImageUrl || defaultImages.hero} alt={homePageContent?.heroImageAlt || 'Монтаж септика под ключ в Санкт-Петербурге и Ленинградской области'} fill loading="eager" sizes="(max-width: 1024px) 100vw, 45vw" className="object-cover object-center" />
             </div>
             <div className="mt-4 grid gap-2 sm:grid-cols-2">
               {['Бесплатный выезд инженера', 'Сертифицированное оборудование', 'Подбор под участок за 5 минут', 'Без скрытых доплат'].map((point) => (

@@ -21,9 +21,9 @@ export default function OrderPage() {
             На этой странице вы можете быстро запросить звонок от нашего инженера. Мы поможем подобрать модель, рассчитать монтаж, согласовать доставку и ответим на все вопросы.
           </p>
           <div className="mt-10 grid gap-6 sm:grid-cols-2">
-            <a href="tel:88005553535" className="rounded-3xl bg-secondary px-6 py-5 text-center font-semibold text-white transition hover:bg-accent">
+            <a href="tel:+79944283029" className="rounded-3xl bg-secondary px-6 py-5 text-center font-semibold text-white transition hover:bg-accent">
               Позвонить инженеру
-              <span className="block text-sm font-normal text-white/80 mt-2">8 800 555-35-35</span>
+              <span className="block text-sm font-normal text-white/80 mt-2">8 994 428-30-29</span>
             </a>
             <div className="rounded-3xl bg-slate-50 p-6">
               <p className="font-semibold text-slate-900">Или оставьте заявку</p>

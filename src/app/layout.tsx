@@ -7,7 +7,7 @@ import Header from '../components/Header';
 import YandexMetrika from '../components/YandexMetrika';
 import MobileStickyCta from '../components/MobileStickyCta';
 
-const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3002';
+const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.septus.ru';
 const logoUrl = '/logo.webp';
 const manrope = Manrope({
   subsets: ['latin', 'cyrillic'],
@@ -45,6 +45,8 @@ export const metadata: Metadata = {
   },
 };
 
+export const preferredRegion = 'fra1';
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
@@ -52,7 +54,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     name: 'Септус',
     image: `${siteUrl}${logoUrl}`,
     url: siteUrl,
-    telephone: '+7-800-555-35-35',
+    telephone: '+7-994-428-30-29',
     email: 'septus-spb@yandex.ru',
     address: {
       '@type': 'PostalAddress',
@@ -97,8 +99,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               <div className="grid gap-6 sm:grid-cols-2">
                 <div className="glass rounded-3xl p-8 hover-lift">
                   <p className="text-sm uppercase tracking-[0.3em] text-[#84b827] font-semibold">Телефон</p>
-                  <a href="tel:88005553535" className="mt-4 block text-2xl font-bold text-white hover:text-emerald-400 transition-colors duration-300">8 800 555-35-35</a>
-                  <p className="mt-2 text-slate-400 text-sm">Звонок бесплатный по РФ</p>
+                  <a href="tel:+79944283029" className="mt-4 block text-2xl font-bold text-white hover:text-emerald-400 transition-colors duration-300">8 994 428-30-29</a>
+                  <p className="mt-2 text-slate-400 text-sm">Звоните ежедневно с 09:00 до 21:00</p>
                 </div>
                 <div className="glass rounded-3xl p-8 hover-lift">
                   <p className="text-sm uppercase tracking-[0.3em] text-[#84b827] font-semibold">Email</p>
