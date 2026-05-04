@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
-# Запуск на VPS под root (один раз): bash <(curl -fsSL ...) или скопируйте файл и: bash deploy/install-on-server.sh
+# Запуск на VPS под root (один раз).
+#
+# Если вставка из Windows даёт мусор ^[[200~ или "bash~": вводите команды по строкам
+# или отключите bracketed paste в настройках терминала.
+#
+# Если нет curl:
+#   apt-get update && apt-get install -y curl ca-certificates
+# Альтернатива загрузки скрипта:
+#   wget -qO- https://raw.githubusercontent.com/Alexandr88228/Septus/main/deploy/install-on-server.sh | bash
 set -euo pipefail
 
 REPO_URL="${REPO_URL:-https://github.com/Alexandr88228/Septus.git}"
