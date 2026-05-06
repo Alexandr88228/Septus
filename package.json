@@ -9,7 +9,7 @@
     "build": "npm run build:studio && next build",
     "build:app": "next build",
     "build:static": "npm run prebuild && npm run build:studio && node scripts/build-static.js && node scripts/copy-static-admin.js",
-    "build:studio": "sanity build public/admin --yes && node scripts/fix-sanity-admin-assets.js public/admin",
+    "build:studio": "sanity build public --yes && node scripts/fix-sanity-admin-assets.js public/admin",
     "build:all": "npm run build",
     "export": "npm run build:static",
     "start": "next start -p 3002",
