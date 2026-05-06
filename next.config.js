@@ -71,13 +71,19 @@ const nextConfig = {
         source: '/admin/',
         destination: '/admin/index.html',
       },
+    ];
+  },
+  async redirects() {
+    return [
       {
         source: '/admin/admin',
-        destination: '/admin/index.html',
+        destination: '/admin',
+        permanent: false,
       },
       {
         source: '/admin/admin/',
-        destination: '/admin/index.html',
+        destination: '/admin',
+        permanent: false,
       },
     ];
   },

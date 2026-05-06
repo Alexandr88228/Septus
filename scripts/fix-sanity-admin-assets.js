@@ -11,10 +11,8 @@ if (!fs.existsSync(adminIndexPath)) {
 
 const html = fs.readFileSync(adminIndexPath, 'utf8');
 const fixedHtml = html
-  .replaceAll('href="/admin/static/', 'href="./static/')
-  .replaceAll('src="/admin/static/', 'src="./static/')
-  .replaceAll('href="/static/', 'href="./static/')
-  .replaceAll('src="/static/', 'src="./static/');
+  .replaceAll('href="/static/', 'href="/admin/static/')
+  .replaceAll('src="/static/', 'src="/admin/static/');
 
 fs.writeFileSync(adminIndexPath, fixedHtml);
 console.log('Sanity admin asset paths fixed for /admin deployment.');
