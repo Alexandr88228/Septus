@@ -12,7 +12,7 @@ export default defineConfig({
   title: 'Septus CMS',
   projectId,
   dataset,
-  basePath: '/admin',
+  basePath: '/',
   schema: {
     types: schemaTypes,
   },
