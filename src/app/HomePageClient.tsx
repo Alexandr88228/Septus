@@ -62,7 +62,7 @@ const defaultBenefits = [
 ];
 
 const defaultImages = {
-  hero: '/catalog-images/biodevays-pro/septik-biodevays-pro.webp',
+  hero: '/catalog-images/biodevays-standart/septik-biodevays-standart.webp',
   product: '/catalog-images/yunilos-astra/septik-yunilos-astra-5.webp',
   project: '/catalog-images/topas/septik-topas.webp',
 };
@@ -385,7 +385,7 @@ export default function HomePageClient({ initialData }: { initialData?: HomePage
             <div className="flex flex-col gap-8">
               <div>
                 <p className="text-sm uppercase tracking-wider text-[#84b827] font-bold">Стоимость септика под ключ</p>
-                <p className="mt-6 text-4xl font-black text-[#84b827] md:text-6xl">
+                <p className="mt-6 whitespace-nowrap text-4xl font-black text-[#84b827] md:text-6xl">
                   {estimate.total.toLocaleString('ru-RU')} ₽
                 </p>
                 <p className="mt-5 max-w-xl text-slate-300 leading-relaxed">Точная цена зависит от глубины выхода трубы, подъезда техники, грунта и выбранной модели. Инженер уточнит смету после осмотра участка.</p>

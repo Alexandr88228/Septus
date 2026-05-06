@@ -5,7 +5,7 @@ import { useState } from 'react';
 import type { SVGProps } from 'react';
 import { trackGoal } from '../lib/metrika';
 
-const logoSrc = '/logo.webp';
+const logoSrc = '/Logo.jpg';
 
 const septicMenu = [
   { label: 'Евролос БИО', href: '/catalog/evrolos-bio' },
@@ -83,7 +83,7 @@ export default function Header() {
       <div className="container mx-auto flex items-center justify-between gap-4 px-4 py-3">
         <Link href="/" className="flex min-w-0 items-center gap-4 text-slate-950">
           <span className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-white shadow-md ring-1 ring-slate-100 md:h-24 md:w-24">
-            <Image src={logoSrc} alt="Логотип Септус" fill className="scale-[1.45] object-cover object-top" sizes="96px" />
+            <Image src={logoSrc} alt="Логотип Септус" fill className="object-contain p-1.5" sizes="96px" />
           </span>
           <div className="min-w-0">
             <p className="text-2xl font-black uppercase leading-none tracking-tight text-[#0b1734] md:text-3xl">СЕПТУС</p>

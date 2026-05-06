@@ -8,7 +8,7 @@ import YandexMetrika from '../components/YandexMetrika';
 import MobileStickyCta from '../components/MobileStickyCta';
 
 const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.septus.ru';
-const logoUrl = '/logo.webp';
+const logoUrl = '/Logo.jpg';
 const manrope = Manrope({
   subsets: ['latin', 'cyrillic'],
   display: 'swap',
