@@ -6,8 +6,9 @@ import { Manrope } from 'next/font/google';
 import Header from '../components/Header';
 import YandexMetrika from '../components/YandexMetrika';
 import MobileStickyCta from '../components/MobileStickyCta';
+import { getSiteUrl, toAbsoluteUrl } from '../lib/absolute-site-url';
 
-const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.septus.ru';
+const siteUrl = getSiteUrl();
 const logoUrl = '/logo.webp';
 const manrope = Manrope({
   subsets: ['latin', 'cyrillic'],
@@ -17,7 +18,7 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(`${getSiteUrl()}/`),
   title: {
     default: 'Септус — септики под ключ в Санкт-Петербурге и ЛО',
     template: '%s | Септус',
@@ -34,6 +35,7 @@ export const metadata: Metadata = {
     title: 'Септус — септики под ключ в Санкт-Петербурге и ЛО',
     description: 'Подбор, доставка и монтаж септиков с гарантией. Бесплатный выезд инженера и расчет стоимости за 5 минут.',
     siteName: 'Септус',
+    images: [{ url: toAbsoluteUrl(logoUrl), width: 512, height: 512, alt: 'Септус — логотип' }],
   },
   robots: {
     index: true,
@@ -51,7 +53,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: 'Септус',
-    image: `${siteUrl}${logoUrl}`,
+    image: toAbsoluteUrl(logoUrl),
     url: siteUrl,
     telephone: '+7-994-428-30-29',
     email: 'septus-spb@yandex.ru',

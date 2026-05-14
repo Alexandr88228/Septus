@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import LeadForm from '../../lead-form';
 import { getAllCases, getCaseBySlug } from '../../../lib/cases';
+import { getSiteUrl, toAbsoluteUrl } from '../../../lib/absolute-site-url';
 
 export const dynamicParams = false;
 
@@ -18,8 +19,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!c) return { title: 'Кейс не найден' };
   const title = c.seoTitle || `${c.title} — монтаж септика`;
   const description = c.seoDescription || c.summary;
-  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.septus.ru';
-  const ogImage = c.images[0];
+  const siteUrl = getSiteUrl();
+  const raw = c.images[0];
+  const ogImage = raw ? toAbsoluteUrl(raw) : toAbsoluteUrl('/logo.webp');
   return {
     title,
     description,
@@ -28,9 +30,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       description,
       type: 'article',
       url: `${siteUrl}/cases/${slug}/`,
-      images: ogImage ? [{ url: ogImage }] : [],
+      images: [{ url: ogImage }],
     },
-    twitter: { card: 'summary_large_image', title, description, images: ogImage ? [ogImage] : undefined },
+    twitter: { card: 'summary_large_image', title, description, images: [ogImage] },
     alternates: { canonical: `/cases/${slug}/` },
   };
 }
@@ -72,22 +74,30 @@ export default async function CasePage({ params }: { params: Promise<{ slug: str
             <h1 className="mt-3 text-2xl font-black text-slate-950 md:text-3xl">{c.title}</h1>
             <p className="mt-4 text-lg text-slate-600">{c.summary}</p>
 
-            <h2 className="mt-10 text-lg font-black text-slate-950">Выполненные работы</h2>
-            <ul className="mt-4 list-inside list-disc space-y-2 text-slate-700">
-              {c.works.map((w) => (
-                <li key={w}>{w}</li>
-              ))}
-            </ul>
+            {c.works.length > 0 ? (
+              <>
+                <h2 className="mt-10 text-lg font-black text-slate-950">Выполненные работы</h2>
+                <ul className="mt-4 list-inside list-disc space-y-2 text-slate-700">
+                  {c.works.map((w) => (
+                    <li key={w}>{w}</li>
+                  ))}
+                </ul>
+              </>
+            ) : null}
 
-            <h2 className="mt-10 text-lg font-black text-slate-950">Оборудование</h2>
-            <dl className="mt-4 grid gap-3 sm:grid-cols-2">
-              {c.equipment.map((row) => (
-                <div key={row.label} className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
-                  <dt className="text-xs font-bold uppercase tracking-wider text-slate-500">{row.label}</dt>
-                  <dd className="mt-1 font-semibold text-slate-900">{row.value}</dd>
-                </div>
-              ))}
-            </dl>
+            {c.equipment.length > 0 ? (
+              <>
+                <h2 className="mt-10 text-lg font-black text-slate-950">Оборудование</h2>
+                <dl className="mt-4 grid gap-3 sm:grid-cols-2">
+                  {c.equipment.map((row) => (
+                    <div key={row.label} className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+                      <dt className="text-xs font-bold uppercase tracking-wider text-slate-500">{row.label}</dt>
+                      <dd className="mt-1 font-semibold text-slate-900">{row.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </>
+            ) : null}
 
             {c.images.length > 1 ? (
               <div className="mt-10 grid gap-4 sm:grid-cols-2">

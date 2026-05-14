@@ -35,8 +35,9 @@ function mapCatalogVariants(row: any, basePriceDisplay: string): ProductCatalogV
   const models = Array.isArray(row.models) ? row.models : [];
   const baseUsers = Number(row.users) || 5;
   const priceValue = Number(row.priceValue) || 0;
+  const seenSlugs = new Set<string>();
 
-  return models
+  const rows = models
     .filter((m: any) => m?.modelSlug)
     .map((m: any) => {
       const users = Number(m.users) || baseUsers;
@@ -47,11 +48,14 @@ function mapCatalogVariants(row: any, basePriceDisplay: string): ProductCatalogV
         priceTrim ||
         (priceValue ? estimatedVariantPrice(priceValue, baseUsers, users) : basePriceDisplay || 'Цена по запросу');
 
+      const modelSlug = String(m.modelSlug)
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9-]/g, '');
+
       return {
-        modelSlug: String(m.modelSlug)
-          .trim()
-          .toLowerCase()
-          .replace(/\s+/g, '-'),
+        modelSlug,
         title:
           (m.title || '').trim() ||
           `${row.name} — ${users} чел., ${dischargeLabel} сброс`,
@@ -62,7 +66,15 @@ function mapCatalogVariants(row: any, basePriceDisplay: string): ProductCatalogV
         capacity: (m.capacity || '').trim(),
         burstDischarge: (m.burstDischarge || '').trim(),
       };
+    })
+    .filter((v) => {
+      if (!v.modelSlug) return false;
+      if (seenSlugs.has(v.modelSlug)) return false;
+      seenSlugs.add(v.modelSlug);
+      return true;
     });
+
+  return rows;
 }
 
 export function mapSanityProducts(rows: any[] = []): Product[] {

@@ -1,9 +1,10 @@
 import type { MetadataRoute } from 'next';
+import { getSiteUrl } from '../lib/absolute-site-url';
 
 export const revalidate = 86400;
 
 export default function robots(): MetadataRoute.Robots {
-  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3002';
+  const siteUrl = getSiteUrl();
   return {
     rules: {
       userAgent: '*',

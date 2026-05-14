@@ -119,9 +119,16 @@ export default async function BrandCatalogPage({ params }: { params: Promise<{ b
                         {models.length > 8 ? <li className="text-slate-500">… и другие конфигурации</li> : null}
                       </ul>
                       <div className="mt-auto pt-6">
-                        <Link href={`/catalog/${brandSlug}/${models[0]?.modelSlug}/`} className="btn-primary inline-flex w-full justify-center text-center">
-                          Открыть модель
-                        </Link>
+                        {models[0] ? (
+                          <Link
+                            href={`/catalog/${brandSlug}/${models[0].modelSlug}/`}
+                            className="btn-primary inline-flex w-full justify-center text-center"
+                          >
+                            Открыть модель
+                          </Link>
+                        ) : (
+                          <p className="text-center text-sm text-amber-800">Для этой серии не сгенерированы модели — проверьте поля в CMS или обратитесь к администратору.</p>
+                        )}
                       </div>
                     </div>
                   </article>

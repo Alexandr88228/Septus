@@ -13,6 +13,7 @@ import {
   getBrandDisplayName,
   slugifyBrand,
 } from '../../../../lib/catalog-routing';
+import { getSiteUrl, toAbsoluteUrl } from '../../../../lib/absolute-site-url';
 
 export const dynamic = 'force-static';
 export const revalidate = 86400;
@@ -41,7 +42,8 @@ export async function generateMetadata({ params }: { params: Promise<{ brandSlug
     product.seoDescription ||
     `${product.name} на ${row.users} чел., ${row.dischargeLabel} сброс. ${(product.description || '').slice(0, 140)}${product.description?.length > 140 ? '…' : ''}`;
   const image = product.images[0];
-  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.septus.ru';
+  const siteUrl = getSiteUrl();
+  const ogImage = image ? toAbsoluteUrl(image) : toAbsoluteUrl('/logo.webp');
   return {
     title,
     description,
@@ -50,9 +52,9 @@ export async function generateMetadata({ params }: { params: Promise<{ brandSlug
       description,
       type: 'website',
       url: `${siteUrl}/catalog/${brandSlug}/${modelSlug}/`,
-      images: image ? [{ url: image }] : [],
+      images: [{ url: ogImage }],
     },
-    twitter: { card: 'summary_large_image', title, description, images: image ? [image] : undefined },
+    twitter: { card: 'summary_large_image', title, description, images: [ogImage] },
     alternates: { canonical: `/catalog/${brandSlug}/${modelSlug}/` },
   };
 }
@@ -71,7 +73,7 @@ export default async function CatalogModelPage({ params }: { params: Promise<{ b
 
   const { row, product } = found;
   const brandName = getBrandDisplayName(brandSlug, products);
-  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.septus.ru';
+  const siteUrl = getSiteUrl();
   const h1 = `${product.name} — ${row.users} чел., ${row.dischargeLabel} сброс`;
 
   const relatedProducts = products
@@ -84,8 +86,8 @@ export default async function CatalogModelPage({ params }: { params: Promise<{ b
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: h1,
-    description: `${product.description} Конфигурация: ${row.users} пользователей, ${row.discharge}.`,
-    image: product.images,
+    description: `${product.description || ''} Конфигурация: ${row.users} пользователей, ${row.discharge}.`.trim(),
+    image: (product.images || []).map((u) => toAbsoluteUrl(u)).filter(Boolean),
     offers: {
       '@type': 'Offer',
       priceCurrency: 'RUB',

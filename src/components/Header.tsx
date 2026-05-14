@@ -1,7 +1,7 @@
 ﻿'use client';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { SVGProps } from 'react';
 import { trackGoal } from '../lib/metrika';
 
@@ -49,6 +49,15 @@ function WhatsAppIcon(props: SVGProps<SVGSVGElement>) {
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [mobileMenuOpen]);
+
   const navItems = [
     { href: '/#home', label: 'Главная' },
     { href: '/catalog', label: 'Септики', mega: true },
@@ -83,7 +92,7 @@ export default function Header() {
       <div className="container mx-auto flex items-center justify-between gap-4 px-4 py-3">
         <Link href="/" className="flex min-w-0 items-center gap-4 text-slate-950">
           <span className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-white shadow-md ring-1 ring-slate-100 md:h-24 md:w-24">
-            <Image src={logoSrc} alt="Логотип Септус" fill className="object-contain p-1.5" sizes="96px" />
+            <Image src={logoSrc} alt="Логотип Септус" fill className="object-contain p-1.5" sizes="96px" priority />
           </span>
           <div className="min-w-0">
             <p className="text-2xl font-black uppercase leading-none tracking-tight text-[#0b1734] md:text-3xl">СЕПТУС</p>
@@ -98,15 +107,17 @@ export default function Header() {
 
         <button
           type="button"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-2xl text-slate-700 lg:hidden"
+          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-2xl text-slate-700 lg:hidden"
           onClick={() => setMobileMenuOpen((prev) => !prev)}
-          aria-label="Открыть меню"
+          aria-expanded={mobileMenuOpen}
+          aria-controls="mobile-menu-drawer"
+          aria-label={mobileMenuOpen ? 'Закрыть меню' : 'Открыть меню'}
         >
           {mobileMenuOpen ? '×' : '≡'}
         </button>
       </div>
 
-      <nav className="hidden bg-[#10214a] lg:block">
+      <nav className="hidden bg-[#10214a] lg:block" aria-label="Основное меню">
         <div className="container mx-auto flex items-center justify-center gap-1 px-4">
           {navItems.map((item) => (
             <div key={item.href} className="group relative">
@@ -138,45 +149,71 @@ export default function Header() {
         </div>
       </nav>
 
-      {mobileMenuOpen && (
-        <div className="border-t border-slate-200 bg-white/95 backdrop-blur-xl lg:hidden">
-          <div className="container mx-auto px-4 py-4 space-y-3">
-            <div className="rounded-2xl bg-slate-50 p-4 text-sm text-slate-600">
-              <p className="font-bold text-slate-900">График работы</p>
-              <p>ежедневно с 09:00 до 21:00</p>
+      {mobileMenuOpen ? (
+        <div className="fixed inset-0 z-[100] lg:hidden" role="dialog" aria-modal="true" id="mobile-menu-drawer">
+          <button
+            type="button"
+            className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]"
+            aria-label="Закрыть меню"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          <div className="absolute inset-x-0 bottom-0 top-14 flex max-h-[calc(100dvh-3.5rem)] flex-col overflow-hidden rounded-t-3xl border border-slate-200 bg-white shadow-2xl">
+            <div className="flex shrink-0 items-center justify-between border-b border-slate-100 px-4 py-3">
+              <p className="text-lg font-black text-slate-900">Меню</p>
+              <button type="button" className="rounded-lg px-3 py-2 text-2xl leading-none text-slate-600" onClick={() => setMobileMenuOpen(false)} aria-label="Закрыть">
+                ×
+              </button>
             </div>
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="block rounded-xl border border-slate-200 px-4 py-3 text-base font-bold text-slate-700 transition hover:border-emerald-300 hover:text-emerald-600"
-              >
-                {item.label}
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4">
+              <div className="rounded-2xl bg-slate-50 p-4 text-sm text-slate-600">
+                <p className="font-bold text-slate-900">График работы</p>
+                <p>ежедневно с 09:00 до 21:00</p>
+              </div>
+              <div className="mt-4 space-y-2">
+                {navItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block rounded-xl border border-slate-200 px-4 py-3 text-base font-bold text-slate-700 transition hover:border-emerald-300 hover:text-emerald-600"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                {septicMenu.map((model) => (
+                  <Link
+                    key={model.href}
+                    href={model.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="rounded-xl border border-slate-200 px-3 py-3 text-sm font-bold text-slate-700 transition hover:border-emerald-300 hover:text-emerald-600"
+                  >
+                    {model.label}
+                  </Link>
+                ))}
+              </div>
+              <div className="mt-4 grid grid-cols-3 gap-2">
+                <a href="https://t.me/" target="_blank" rel="noreferrer" className="rounded-xl border border-slate-200 px-3 py-3 text-center text-sm font-bold text-slate-700">
+                  TG
+                </a>
+                <a href="https://vk.com/septusru" target="_blank" rel="noreferrer" className="rounded-xl border border-slate-200 px-3 py-3 text-center text-sm font-bold text-slate-700">
+                  VK
+                </a>
+                <a href="https://wa.me/79944283029" target="_blank" rel="noreferrer" onClick={() => trackGoal('click_whatsapp')} className="rounded-xl border border-slate-200 px-3 py-3 text-center text-sm font-bold text-slate-700">
+                  WA
+                </a>
+              </div>
+              <a href="tel:+79944283029" onClick={() => trackGoal('click_phone')} className="mt-4 block rounded-xl bg-black px-4 py-3 text-center text-base font-bold text-white">
+                8 994 428-30-29
+              </a>
+              <Link href="/#lead" onClick={() => setMobileMenuOpen(false)} className="mt-2 block rounded-xl bg-secondary px-4 py-3 text-center text-base font-extrabold text-white">
+                Заказать замер бесплатно
               </Link>
-            ))}
-            <div className="grid grid-cols-2 gap-2">
-              {septicMenu.map((model) => (
-                <Link
-                  key={model.href}
-                  href={model.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="rounded-xl border border-slate-200 px-3 py-3 text-sm font-bold text-slate-700 transition hover:border-emerald-300 hover:text-emerald-600"
-                >
-                  {model.label}
-                </Link>
-              ))}
             </div>
-            <div className="grid grid-cols-3 gap-2">
-              <a href="https://t.me/" target="_blank" rel="noreferrer" className="rounded-xl border border-slate-200 px-3 py-3 text-center text-sm font-bold text-slate-700">TG</a>
-              <a href="https://vk.com/septusru" target="_blank" rel="noreferrer" className="rounded-xl border border-slate-200 px-3 py-3 text-center text-sm font-bold text-slate-700">VK</a>
-              <a href="https://wa.me/79944283029" target="_blank" rel="noreferrer" onClick={() => trackGoal('click_whatsapp')} className="rounded-xl border border-slate-200 px-3 py-3 text-center text-sm font-bold text-slate-700">WA</a>
-            </div>
-            <a href="tel:+79944283029" onClick={() => trackGoal('click_phone')} className="block rounded-xl bg-black px-4 py-3 text-center text-base font-bold text-white">8 994 428-30-29</a>
-            <Link href="/#lead" onClick={() => setMobileMenuOpen(false)} className="block rounded-xl bg-secondary px-4 py-3 text-center text-base font-extrabold text-white">Заказать замер бесплатно</Link>
           </div>
         </div>
-      )}
+      ) : null}
     </header>
   );
 }
