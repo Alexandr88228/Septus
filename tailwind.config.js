@@ -7,7 +7,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'Segoe UI', 'Arial', 'sans-serif'],
+        sans: ['var(--font-manrope)', 'system-ui', 'Segoe UI', 'Arial', 'sans-serif'],
       },
       colors: {
         primary: 'var(--primary)',

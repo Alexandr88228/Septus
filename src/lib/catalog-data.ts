@@ -4,6 +4,7 @@ import { hasSanityConfig } from '../sanity/env';
 import { mapSanityProducts } from '../sanity/mappers';
 import { productsQuery } from '../sanity/queries';
 import { PUBLIC_PAGE_REVALIDATE_SECONDS } from './cache';
+import { SANITY_CACHE_TAG } from './sanity-cache-tag';
 import { getProductsFromFolder, type Product } from './products';
 
 async function getSanityProductsUncached(): Promise<Product[]> {
@@ -19,6 +20,7 @@ async function getSanityProductsUncached(): Promise<Product[]> {
 
 const getSanityProducts = unstable_cache(getSanityProductsUncached, ['sanity-products'], {
   revalidate: PUBLIC_PAGE_REVALIDATE_SECONDS,
+  tags: [SANITY_CACHE_TAG],
 });
 
 async function getCatalogProductsUncached(): Promise<Product[]> {
@@ -31,15 +33,13 @@ async function getCatalogProductsUncached(): Promise<Product[]> {
     return localProducts;
   }
 
-  const productsBySlug = new Map<string, Product>();
-  localProducts.forEach((product) => productsBySlug.set(product.slug, product));
-  sanityProducts.forEach((product) => productsBySlug.set(product.slug, product));
-
-  return Array.from(productsBySlug.values()).sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+  /** В Sanity есть хотя бы один товар — источник правды только CMS (без склейки с файлами). */
+  return sanityProducts.sort((a, b) => a.name.localeCompare(b.name, 'ru'));
 }
 
 export const getCatalogProducts = unstable_cache(getCatalogProductsUncached, ['catalog-products'], {
   revalidate: PUBLIC_PAGE_REVALIDATE_SECONDS,
+  tags: [SANITY_CACHE_TAG],
 });
 
 export async function getCatalogProductBySlug(slug: string): Promise<Product | null> {

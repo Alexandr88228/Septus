@@ -4,21 +4,45 @@ export const homePageQuery = `*[_type == "homePage"][0]{
   heroText,
   heroImage,
   heroBadges,
+  heroCtaPrimaryLabel,
+  heroCtaPrimaryHref,
+  heroCtaSecondaryLabel,
+  heroCtaSecondaryHref,
   benefits,
+  infoBlocks,
+  infoBlocksLinkLabel,
+  infoBlocksLinkHref,
+  "featuredCaseStudies": featuredCaseStudies[]->{
+    _id,
+    title,
+    slug,
+    location,
+    summary,
+    works,
+    equipment,
+    images,
+    seoTitle,
+    seoDescription
+  },
   projects,
   faqs,
   leadTitle,
   leadText
 }`;
 
-export const productsQuery = `*[_type == "product"] | order(name asc){
+export const productsQuery = `*[_type == "product" && (!defined(isPublished) || isPublished != false)] | order(name asc){
   _id,
+  isPublished,
   name,
   slug,
   brand,
   description,
   price,
+  pricePrefix,
   priceValue,
+  priceWas,
+  seoTitle,
+  seoDescription,
   images,
   features,
   users,
@@ -34,10 +58,40 @@ export const productsQuery = `*[_type == "product"] | order(name asc){
   suitableFor,
   cleaningLevel,
   maintenance,
+  specsExtra,
   models
 }`;
 
-export const reviewsQuery = `*[_type == "review" && isPublished != false] | order(_createdAt desc){
+export const caseStudiesQuery = `*[_type == "caseStudy" && (!defined(isPublished) || isPublished != false)] | order(sortOrder asc, _createdAt desc){
+  _id,
+  title,
+  slug,
+  location,
+  summary,
+  works,
+  equipment,
+  images,
+  seoTitle,
+  seoDescription,
+  sortOrder
+}`;
+
+export const promotionsQuery = `*[_type == "promotion" && (!defined(isActive) || isActive != false)] | order(sortOrder asc, _createdAt desc){
+  _id,
+  title,
+  description,
+  badge,
+  discountPercent,
+  image,
+  validFrom,
+  validUntil,
+  buttonText,
+  buttonHref,
+  sortOrder,
+  isActive
+}`;
+
+export const reviewsQuery = `*[_type == "review" && (!defined(isPublished) || isPublished != false)] | order(_createdAt desc){
   _id,
   author,
   area,

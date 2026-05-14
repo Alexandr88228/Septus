@@ -44,8 +44,8 @@ export default function LeadPage() {
               </div>
             </div>
 
-            <div className="rounded-[1.75rem] border border-slate-200 bg-white p-8 shadow-sm">
-              <LeadForm />
+            <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+              <LeadForm title="Оставить заявку" theme="light" subtitle="Мы перезвоним и уточним детали по объекту." />
             </div>
           </div>
         </div>

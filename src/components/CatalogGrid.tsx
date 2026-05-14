@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Product } from '../lib/products';
+import { slugifyBrand } from '../lib/catalog-routing';
 import { trackGoal } from '../lib/metrika';
 
 type SortMode = 'popular' | 'price' | 'name' | 'users' | 'capacity';
@@ -234,7 +235,7 @@ export default function CatalogGrid({ products }: { products: Product[] }) {
         {filteredProducts.map((product) => (
           <article key={product.id} className="group flex h-full flex-col overflow-hidden rounded-3xl bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
             <Link
-              href={`/catalog/${product.slug}`}
+              href={`/catalog/${slugifyBrand(product.brand)}/`}
               onClick={() => trackGoal('open_product', { productName: product.name })}
               className="relative block aspect-[4/3] overflow-hidden bg-slate-100"
             >
@@ -250,7 +251,7 @@ export default function CatalogGrid({ products }: { products: Product[] }) {
 
             <div className="flex flex-1 flex-col p-6">
               <Link
-                href={`/catalog/${product.slug}`}
+                href={`/catalog/${slugifyBrand(product.brand)}/`}
                 onClick={() => trackGoal('open_product', { productName: product.name })}
                 className="mb-2 block text-xl font-bold text-slate-950 transition hover:text-emerald-700"
               >
@@ -275,7 +276,7 @@ export default function CatalogGrid({ products }: { products: Product[] }) {
               </div>
 
               <Link
-                href={`/catalog/${product.slug}`}
+                href={`/catalog/${slugifyBrand(product.brand)}/`}
                 onClick={() => trackGoal('open_product', { productName: product.name })}
                 className="mt-auto inline-flex items-center justify-center rounded-2xl bg-[#84b827] px-5 py-3 text-base font-black text-white transition hover:bg-[#6d981f]"
               >

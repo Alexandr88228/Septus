@@ -56,7 +56,7 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-size: 17px;
+    font-size: 16px;
     line-height: 1.68;
   }
 
@@ -76,7 +76,7 @@
 
   section:not(#home) {
     content-visibility: auto;
-    contain-intrinsic-size: 1px 720px;
+    contain-intrinsic-size: 1px 520px;
   }
 }
 
@@ -214,9 +214,9 @@
   }
 
   .section-heading {
-    font-size: clamp(2.1rem, 5vw, 3.55rem);
-    font-weight: 900;
-    line-height: 1.08;
+    font-size: clamp(1.65rem, 3.8vw, 2.65rem);
+    font-weight: 800;
+    line-height: 1.12;
     color: var(--text-primary);
     letter-spacing: -0.02em;
     background: var(--gradient-primary);
@@ -227,9 +227,24 @@
 
   .section-subtitle {
     color: var(--text-secondary);
-    line-height: 1.7;
-    font-size: 1.18rem;
+    line-height: 1.65;
+    font-size: 1.05rem;
     font-weight: 500;
+  }
+
+  .hero-title {
+    font-size: clamp(1.75rem, 4.2vw, 2.75rem);
+    font-weight: 800;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: var(--primary-deep);
+  }
+
+  .hero-lead {
+    font-size: clamp(1rem, 2.2vw, 1.2rem);
+    font-weight: 500;
+    line-height: 1.55;
+    color: var(--text-secondary);
   }
 
   .feature-pill {

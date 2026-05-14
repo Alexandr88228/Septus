@@ -5,7 +5,7 @@ import { useState } from 'react';
 import type { SVGProps } from 'react';
 import { trackGoal } from '../lib/metrika';
 
-const logoSrc = '/Logo.jpg';
+const logoSrc = '/logo.webp';
 
 const septicMenu = [
   { label: 'Евролос БИО', href: '/catalog/evrolos-bio' },
@@ -53,8 +53,8 @@ export default function Header() {
     { href: '/#home', label: 'Главная' },
     { href: '/catalog', label: 'Септики', mega: true },
     { href: '/order', label: 'Доставка и оплата' },
-    { href: '/#services', label: 'Услуги' },
-    { href: '/#lead', label: 'Акции' },
+    { href: '/cases/', label: 'Услуги' },
+    { href: '/promotions/', label: 'Акции' },
     { href: '/#contacts', label: 'Контакты' },
   ];
 
@@ -67,7 +67,7 @@ export default function Header() {
             <a href="https://t.me/" target="_blank" rel="noreferrer" aria-label="Telegram" className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-[#84b827]">
               <TelegramIcon className="h-4 w-4" />
             </a>
-            <a href="https://vk.com/" target="_blank" rel="noreferrer" aria-label="VK" className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-[#84b827]">
+            <a href="https://vk.com/septusru" target="_blank" rel="noreferrer" aria-label="VK — Септус" className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-[#84b827]">
               <VkIcon className="h-4 w-4" />
             </a>
             <a href="https://wa.me/79944283029" target="_blank" rel="noreferrer" aria-label="WhatsApp" onClick={() => trackGoal('click_whatsapp')} className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-[#84b827]">
@@ -169,7 +169,7 @@ export default function Header() {
             </div>
             <div className="grid grid-cols-3 gap-2">
               <a href="https://t.me/" target="_blank" rel="noreferrer" className="rounded-xl border border-slate-200 px-3 py-3 text-center text-sm font-bold text-slate-700">TG</a>
-              <a href="https://vk.com/" target="_blank" rel="noreferrer" className="rounded-xl border border-slate-200 px-3 py-3 text-center text-sm font-bold text-slate-700">VK</a>
+              <a href="https://vk.com/septusru" target="_blank" rel="noreferrer" className="rounded-xl border border-slate-200 px-3 py-3 text-center text-sm font-bold text-slate-700">VK</a>
               <a href="https://wa.me/79944283029" target="_blank" rel="noreferrer" onClick={() => trackGoal('click_whatsapp')} className="rounded-xl border border-slate-200 px-3 py-3 text-center text-sm font-bold text-slate-700">WA</a>
             </div>
             <a href="tel:+79944283029" onClick={() => trackGoal('click_phone')} className="block rounded-xl bg-black px-4 py-3 text-center text-base font-bold text-white">8 994 428-30-29</a>

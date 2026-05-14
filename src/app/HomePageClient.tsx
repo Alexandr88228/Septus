@@ -5,7 +5,9 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
+import { slugifyBrand } from '../lib/slug';
 import { trackGoal } from '../lib/metrika';
+import type { CaseStudy } from '../content/cases';
 
 const LeadForm = dynamic(() => import('./lead-form'), {
   ssr: false,
@@ -19,6 +21,7 @@ type HomePageData = {
   projects: any[];
   reviews: any[];
   faqs: any[];
+  cases?: CaseStudy[];
 };
 
 const catalogModels = [
@@ -64,15 +67,7 @@ const defaultBenefits = [
 const defaultImages = {
   hero: '/catalog-images/biodevays-standart/septik-biodevays-standart.webp',
   product: '/catalog-images/yunilos-astra/septik-yunilos-astra-5.webp',
-  project: '/catalog-images/topas/septik-topas.webp',
 };
-
-const defaultProjects = [
-  { image: '/catalog-images/biodevays-pro/septik-biodevays-pro.webp', location: 'Всеволожск', model: 'Биодевайс ПРО', duration: 'Монтаж за 1 день', complexity: 'Сложный грунт', result: 'Запуск в день установки' },
-  { image: '/catalog-images/yunilos-astra/septik-yunilos-astra-5.webp', location: 'Гатчина', model: 'Юнилос Астра', duration: 'Монтаж за 1 день', complexity: 'Высокие грунтовые воды', result: 'Стабильная работа без запаха' },
-  { image: '/catalog-images/ital-bio/septik-ital-bio.webp', location: 'Пушкин', model: 'Итал Био', duration: 'Монтаж за 1 день', complexity: 'Ограниченный участок', result: 'Компактное решение под ключ' },
-  { image: '/catalog-images/ital-antey/septik-ital-antey.webp', location: 'Кудрово', model: 'Итал Антей', duration: 'Монтаж за 1 день', complexity: 'Зимний монтаж', result: 'Сдано по договору в срок' },
-];
 
 const defaultReviews = [
   { author: 'Игорь, Парголово', value: 5.0, text: 'Поставили за один день, всё чисто и быстро.' },
@@ -164,12 +159,6 @@ function EstimateRow({ label, value, strong = false }: { label: string; value: s
   );
 }
 
-function getProjectModel(project: any) {
-  if (project.location === 'Пушкин') return 'Итал Био';
-  if (project.location === 'Кудрово') return 'Итал Антей';
-  return project.model || 'Биодевайс ПРО';
-}
-
 export default function HomePageClient({ initialData }: { initialData?: HomePageData | null }) {
   const [people, setPeople] = useState(3);
   const [residence, setResidence] = useState('seasonal');
@@ -179,10 +168,10 @@ export default function HomePageClient({ initialData }: { initialData?: HomePage
   const [activeReviewIndex, setActiveReviewIndex] = useState(0);
   const [products, setProducts] = useState<any[]>(initialData?.products ?? []);
   const [benefits, setBenefits] = useState<any[]>(initialData?.benefits ?? []);
-  const [projects, setProjects] = useState<any[]>(initialData?.projects ?? []);
   const [reviews, setReviews] = useState<any[]>(initialData?.reviews ?? []);
   const [faqs, setFaqs] = useState<any[]>(initialData?.faqs ?? []);
   const [homePageContent, setHomePageContent] = useState<any>(initialData?.homePage ?? null);
+  const casesPreview = initialData?.cases?.length ? initialData.cases.slice(0, 4) : [];
 
   const estimate = useMemo(() => {
     const selectedPeople = peopleOptions.find((item) => item.value === people) ?? peopleOptions[1];
@@ -246,47 +235,78 @@ export default function HomePageClient({ initialData }: { initialData?: HomePage
 
   return (
     <div className="space-y-16 pb-20">
-      <section id="home" className="relative overflow-hidden rounded-[2rem] border border-slate-200/70 bg-white px-5 py-10 md:rounded-[2.5rem] md:bg-gradient-to-br md:from-white md:via-slate-50 md:to-emerald-50 md:px-10 md:py-16">
-        <div className="pointer-events-none absolute -top-20 -right-10 hidden h-80 w-80 rounded-full bg-emerald-300/20 blur-3xl md:block" />
-        <div className="pointer-events-none absolute -bottom-10 -left-10 hidden h-72 w-72 rounded-full bg-sky-200/20 blur-3xl md:block" />
-        <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="space-y-7">
-            <span className="inline-flex items-center rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-slate-600">{homePageContent?.heroBadge || 'Работа по договору | СПб и ЛО'}</span>
-            <h1 className="max-w-4xl text-5xl font-black leading-[1.03] tracking-tight text-[#0b1734] md:text-7xl">{homePageContent?.heroTitle || 'СЕПТУС — септики под ключ СПБ и ЛО'}</h1>
-            <p className="max-w-2xl text-2xl font-semibold leading-relaxed text-slate-700">{homePageContent?.heroText || 'Монтаж, доставка, запуск и гарантия до 10 лет. Бесплатный выезд инженера сегодня.'}</p>
-            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Link href="/catalog" onClick={() => trackGoal('click_catalog')} className="btn-outline text-base font-black">Смотреть каталог</Link>
-              <Link href="#calculator" onClick={() => trackGoal('click_calculator')} className="inline-flex items-center justify-center rounded-[1.75rem] border border-[#84b827] bg-[#84b827] px-8 py-4 text-base font-black text-white shadow-medium transition hover:-translate-y-0.5 hover:bg-[#6d981f]">Рассчитать стоимость</Link>
+      <section id="home" className="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white px-4 py-8 sm:px-6 sm:py-10 md:rounded-[2rem] md:bg-gradient-to-br md:from-white md:via-slate-50 md:to-emerald-50/80 md:px-8 md:py-12 lg:py-14">
+        <div className="pointer-events-none absolute -top-20 -right-10 hidden h-72 w-72 rounded-full bg-emerald-300/15 blur-3xl md:block" />
+        <div className="pointer-events-none absolute -bottom-10 -left-10 hidden h-64 w-64 rounded-full bg-sky-200/15 blur-3xl md:block" />
+        <div className="relative z-10 grid items-center gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-10">
+          <div className="space-y-5 md:space-y-6">
+            <span className="inline-flex max-w-full items-center rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-600 sm:text-xs sm:tracking-[0.2em]">
+              {homePageContent?.heroBadge || 'Работа по договору | СПб и ЛО'}
+            </span>
+            <h1 className="hero-title max-w-3xl">
+              {homePageContent?.heroTitle || 'Септус — септики под ключ в СПб и ЛО'}
+            </h1>
+            <p className="hero-lead max-w-xl">
+              {homePageContent?.heroText || 'Монтаж, доставка, запуск и гарантия до 10 лет. Бесплатный выезд инженера по согласованию.'}
+            </p>
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+              <Link
+                href={homePageContent?.heroCtaPrimaryHref || '/catalog/'}
+                onClick={() => trackGoal('click_catalog')}
+                className="btn-outline px-6 py-3.5 text-sm font-bold sm:text-base"
+              >
+                {homePageContent?.heroCtaPrimaryLabel || 'Смотреть каталог'}
+              </Link>
+              <Link
+                href={homePageContent?.heroCtaSecondaryHref || '#calculator'}
+                onClick={() => trackGoal('click_calculator')}
+                className="inline-flex items-center justify-center rounded-[1.75rem] border border-[#84b827] bg-[#84b827] px-6 py-3.5 text-sm font-bold text-white shadow-md transition hover:bg-[#6d981f] sm:text-base"
+              >
+                {homePageContent?.heroCtaSecondaryLabel || 'Рассчитать стоимость'}
+              </Link>
             </div>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
               {(homePageContent?.heroBadges?.length ? homePageContent.heroBadges : ['★★★★★ 5.0 рейтинг', '350+ объектов', '8+ лет опыта', 'Гарантия 10 лет']).map((badge: string) => (
-                <div key={badge} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base font-bold text-slate-700 shadow-sm">{badge}</div>
+                <div key={badge} className="rounded-xl border border-slate-200/90 bg-white px-3 py-2.5 text-xs font-semibold text-slate-700 shadow-sm sm:text-sm">
+                  {badge}
+                </div>
               ))}
             </div>
           </div>
-          <div className="relative rounded-3xl border border-white/70 bg-white p-4 shadow-md md:bg-white/80 md:p-5 md:shadow-2xl md:backdrop-blur">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
-              <Image src={homePageContent?.heroImageUrl || defaultImages.hero} alt={homePageContent?.heroImageAlt || 'Монтаж септика под ключ в Санкт-Петербурге и Ленинградской области'} fill loading="eager" sizes="(max-width: 1024px) 100vw, 45vw" className="object-cover object-center" />
-            </div>
-            <div className="mt-4 grid gap-2 sm:grid-cols-2">
-              {['Бесплатный выезд инженера', 'Сертифицированное оборудование', 'Подбор под участок за 5 минут', 'Без скрытых доплат'].map((point) => (
-                <div key={point} className="rounded-xl bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700">{point}</div>
-              ))}
+          <div className="relative mx-auto w-full max-w-lg lg:mx-0 lg:max-w-none">
+            <div className="rounded-2xl border border-slate-200/80 bg-slate-50/80 p-2 shadow-sm md:bg-white/90 md:p-3 md:shadow-lg md:backdrop-blur-sm">
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-white">
+                <Image
+                  src={homePageContent?.heroImageUrl || defaultImages.hero}
+                  alt={homePageContent?.heroImageAlt || 'Монтаж септика под ключ в Санкт-Петербурге и Ленинградской области'}
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 42vw"
+                  className="object-contain object-center p-2 sm:p-3"
+                />
+              </div>
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                {['Бесплатный выезд инженера', 'Сертифицированное оборудование', 'Подбор под участок', 'Без скрытых доплат'].map((point) => (
+                  <div key={point} className="rounded-lg bg-slate-50 px-2.5 py-2 text-xs font-semibold text-slate-700 md:bg-slate-50/90 md:text-sm">
+                    {point}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section id="services" className="container mx-auto px-4">
+      <section id="benefits" className="container mx-auto px-4">
         <div className="mb-8 text-center">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-emerald-600">Почему выбирают нас</p>
-          <h2 className="section-heading mt-4">Надежный подрядчик для септика под ключ</h2>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-600 sm:text-sm sm:tracking-[0.2em]">Почему выбирают нас</p>
+          <h2 className="section-heading mt-3">Надёжный подрядчик для септика под ключ</h2>
         </div>
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4 md:gap-6">
           {(benefits.length > 0 ? benefits.slice(0, 4) : defaultBenefits).map((item: any) => (
-            <article key={item.id || item.title} className="rounded-3xl border border-slate-200 bg-white p-7 shadow-soft transition hover:-translate-y-1 hover:shadow-medium">
-              <h3 className="text-2xl font-extrabold leading-tight text-slate-900">{item.title}</h3>
-              <p className="mt-4 text-lg leading-relaxed text-slate-600">{item.description}</p>
+            <article key={item.id || item.title} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-soft transition hover:-translate-y-0.5 hover:shadow-medium md:rounded-3xl md:p-7">
+              <h3 className="text-lg font-bold leading-snug text-slate-900 md:text-xl">{item.title}</h3>
+              <p className="mt-3 text-sm leading-relaxed text-slate-600 md:text-base">{item.description}</p>
             </article>
           ))}
         </div>
@@ -318,7 +338,13 @@ export default function HomePageClient({ initialData }: { initialData?: HomePage
                   <span className="text-slate-500">до {product.users || 8} чел</span>
                 </div>
                 <div className="mt-4 grid gap-2 sm:grid-cols-2">
-                  <Link href={`/catalog/${product.slug || product.title?.toLowerCase().replace(/\s+/g, '-')}`} className="btn-outline flex-1 px-4 py-3 text-sm" onClick={() => trackGoal('open_product')}>Подробнее</Link>
+                  <Link
+                    href={`/catalog/${slugifyBrand(product.brand)}/`}
+                    className="btn-outline flex-1 px-4 py-3 text-center text-sm"
+                    onClick={() => trackGoal('open_product')}
+                  >
+                    Подробнее
+                  </Link>
                   <Link href="#lead" className="btn-primary flex-1 px-4 py-3 text-sm">Подобрать</Link>
                 </div>
               </div>
@@ -332,15 +358,15 @@ export default function HomePageClient({ initialData }: { initialData?: HomePage
           <div className="rounded-3xl bg-[#0b1734] p-6 shadow-2xl md:p-10">
             <div className="animate-fade-in">
               <p className="text-sm uppercase tracking-wider text-[#84b827] font-bold">Интерактивный расчет</p>
-              <h2 className="mt-4 text-4xl font-black leading-tight text-white md:text-5xl">Предварительная стоимость септика под ключ</h2>
-              <p className="mt-6 max-w-2xl text-lg font-medium leading-relaxed text-slate-300">Калькулятор считает оборудование, монтаж, грунт, уровень воды и длину трассы.</p>
+              <h2 className="mt-4 text-2xl font-bold leading-tight text-white md:text-3xl">Предварительная стоимость септика под ключ</h2>
+              <p className="mt-4 max-w-2xl text-base font-medium leading-relaxed text-slate-300 md:mt-5 md:text-lg">Калькулятор считает оборудование, монтаж, грунт, уровень воды и длину трассы.</p>
             </div>
 
             <div className="mt-10 grid gap-6 animate-slide-in-left">
               <CalculatorGroup title="Сколько человек будет пользоваться канализацией?">
                 {peopleOptions.map((option) => (
                   <CalculatorButton key={option.label} active={people === option.value} onClick={() => setPeople(option.value)}>
-                    <span className="block text-lg font-extrabold">{option.label}</span>
+                    <span className="block text-base font-bold md:text-lg">{option.label}</span>
                   </CalculatorButton>
                 ))}
               </CalculatorGroup>
@@ -385,7 +411,7 @@ export default function HomePageClient({ initialData }: { initialData?: HomePage
             <div className="flex flex-col gap-8">
               <div>
                 <p className="text-sm uppercase tracking-wider text-[#84b827] font-bold">Стоимость септика под ключ</p>
-                <p className="mt-6 whitespace-nowrap text-4xl font-black text-[#84b827] md:text-6xl">
+                <p className="mt-4 whitespace-nowrap text-3xl font-black text-[#84b827] md:text-5xl">
                   {estimate.total.toLocaleString('ru-RU')} ₽
                 </p>
                 <p className="mt-5 max-w-xl text-slate-300 leading-relaxed">Точная цена зависит от глубины выхода трубы, подъезда техники, грунта и выбранной модели. Инженер уточнит смету после осмотра участка.</p>
@@ -416,29 +442,42 @@ export default function HomePageClient({ initialData }: { initialData?: HomePage
       </section>
 
       <section id="projects" className="container mx-auto px-4">
-        <div className="space-y-8">
-          <div className="animate-fade-in">
-            <div>
-              <p className="text-sm uppercase tracking-wider text-emerald-600 font-bold">Наши работы</p>
-              <h2 className="section-heading">Галерея кейсов: наши монтажи</h2>
-            </div>
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-wider text-emerald-600 sm:text-sm">Наши работы</p>
+            <h2 className="section-heading mt-2">Реальные монтажи</h2>
+            <p className="mt-3 max-w-2xl text-sm text-slate-600 md:text-base">Фото с объектов и описание работ. Полный список — в разделе кейсов.</p>
           </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {(projects.length > 0 ? projects.slice(0, 4) : defaultProjects).map((project: any) => (
-              <article key={project.id || project.image} className="flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-soft transition hover:-translate-y-1 hover:shadow-medium">
-                <div className="relative h-56 w-full">
-                  <Image src={project.image?.startsWith('/') ? project.image : defaultImages.project} alt={project.location || 'Кейс монтажа'} fill sizes="(max-width: 768px) 100vw, 25vw" className="object-cover" />
-                </div>
-                <div className="flex flex-1 flex-col p-6">
-                  <p className="text-xl font-extrabold text-slate-900">{project.location}</p>
-                  <div className="mt-3 space-y-2 text-base leading-relaxed text-slate-600">
-                    <p><span className="font-semibold text-slate-800">Модель:</span> {getProjectModel(project)}</p>
-                    <p><span className="font-semibold text-slate-800">Срок:</span> {project.duration || 'Монтаж за 1 день'}</p>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
+          <Link href="/cases/" className="btn-outline shrink-0 text-sm">
+            Все кейсы
+          </Link>
+        </div>
+        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4 sm:gap-6">
+          {casesPreview.map((c) => (
+            <Link
+              key={c.slug}
+              href={`/cases/${c.slug}/`}
+              className="group flex min-h-[100%] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-[#84b827]/40 hover:shadow-md md:rounded-3xl"
+            >
+              <div className="relative aspect-[4/3] w-full shrink-0 bg-slate-100">
+                {c.images[0] ? (
+                  <Image
+                    src={c.images[0]}
+                    alt={c.title}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    className="object-contain object-center p-3 transition duration-300 group-hover:scale-[1.02]"
+                  />
+                ) : null}
+              </div>
+              <div className="flex flex-1 flex-col p-4 md:p-5">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[#84b827]">{c.location}</p>
+                <p className="mt-1 text-base font-bold leading-snug text-slate-900 md:text-lg">{c.title}</p>
+                <p className="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-slate-600">{c.summary}</p>
+                <span className="mt-4 text-xs font-bold text-[#10214a] group-hover:text-[#84b827] md:text-sm">Подробнее →</span>
+              </div>
+            </Link>
+          ))}
         </div>
       </section>
 
@@ -503,17 +542,59 @@ export default function HomePageClient({ initialData }: { initialData?: HomePage
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-[#84b827]/30 bg-[#84b827]/10 text-xl font-black text-[#84b827] shadow-xl mb-6">
                   {index + 1}
                 </div>
-                <h3 className="mb-3 text-xl font-extrabold leading-snug text-[#84b827]">{item.step}</h3>
-                <p className="text-base text-slate-600 leading-relaxed">{item.desc}</p>
+                <h3 className="mb-2 text-lg font-bold leading-snug text-[#84b827] md:mb-3 md:text-xl">{item.step}</h3>
+                <p className="text-sm text-slate-600 leading-relaxed md:text-base">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
+      <section id="zamer-info" className="container mx-auto px-4">
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-10">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-xs font-bold uppercase tracking-wider text-emerald-600">Условия</p>
+            <h2 className="section-heading mt-2">Замер, доставка и оплата</h2>
+            <p className="mt-3 text-sm text-slate-600 md:text-base">Кратко о главном — подробности на странице «Доставка и оплата».</p>
+          </div>
+          <div className="mt-8 grid gap-5 md:grid-cols-3 md:gap-6">
+            {(Array.isArray(homePageContent?.infoBlocks) && homePageContent.infoBlocks.length > 0
+              ? homePageContent.infoBlocks
+              : [
+                  {
+                    label: 'Бесплатный замер',
+                    body: 'Выезд инженера, подбор решения, смета за 3 дня, согласование монтажа и пуск за один день.',
+                  },
+                  {
+                    label: 'Доставка',
+                    body: 'Входит в стоимость «под ключ». Без монтажа — доставка до 80 км в подарок. Возможен самовывоз.',
+                  },
+                  {
+                    label: 'Оплата',
+                    body: 'Удобные варианты для частных клиентов. Юридическим лицам — оплата по счёту.',
+                  },
+                ]
+            ).map((block: { label: string; body: string }) => (
+              <div key={block.label} className="rounded-2xl border border-slate-100 bg-slate-50/80 p-5 md:p-6">
+                <p className="text-sm font-bold text-[#84b827]">{block.label}</p>
+                <p className="mt-3 text-sm leading-relaxed text-slate-600">{block.body}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-8 text-center">
+            <Link
+              href={homePageContent?.infoBlocksLinkHref || '/order/'}
+              className="btn-outline inline-flex px-6 py-3 text-sm font-bold"
+            >
+              {homePageContent?.infoBlocksLinkLabel || 'Все условия доставки и оплаты'}
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <section id="faq" className="container mx-auto px-4">
-        <div className="glass rounded-3xl p-12 shadow-2xl hover-lift">
-          <div className="text-center mb-12 animate-fade-in">
+        <div className="glass rounded-3xl p-6 shadow-2xl hover-lift md:p-10 lg:p-12">
+          <div className="text-center mb-8 md:mb-12 animate-fade-in">
             <p className="text-sm uppercase tracking-wider text-emerald-600 font-bold">FAQ</p>
             <h2 className="section-heading mt-4">Частые вопросы и ответы</h2>
           </div>
@@ -534,18 +615,18 @@ export default function HomePageClient({ initialData }: { initialData?: HomePage
       </section>
 
       <section id="lead" className="container mx-auto px-4">
-        <div className="relative overflow-hidden rounded-3xl p-6 text-white shadow-2xl hover-lift md:p-12" style={{ background: '#0b1734' }}>
+        <div className="relative overflow-hidden rounded-3xl p-6 text-white shadow-2xl hover-lift md:p-10 lg:p-12" style={{ background: '#0b1734' }}>
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-emerald-500/10 via-transparent to-green-500/10"></div>
           <div className="pointer-events-none absolute top-20 left-20 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl"></div>
           <div className="pointer-events-none absolute bottom-20 right-20 w-80 h-80 bg-green-500/5 rounded-full blur-3xl"></div>
 
           <div className="relative grid gap-12 lg:grid-cols-[0.9fr_1.1fr] items-center">
             <div className="animate-fade-in">
-              <h2 className="text-4xl font-black leading-tight text-white md:text-5xl">{homePageContent?.leadTitle || 'Получите бесплатную консультацию'}</h2>
-              <p className="mt-6 max-w-2xl text-slate-300 leading-relaxed text-lg">{homePageContent?.leadText || 'Оставьте данные и инженер свяжется в течение часа. Подготовим выгодное решение по вашему участку с учетом всех особенностей.'}</p>
+              <h2 className="text-3xl font-black leading-tight text-white md:text-4xl">{homePageContent?.leadTitle || 'Получите бесплатную консультацию'}</h2>
+              <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-300 md:mt-5 md:text-lg">{homePageContent?.leadText || 'Оставьте данные — инженер свяжется в течение часа и подготовит решение под ваш участок.'}</p>
             </div>
-            <div className="glass-dark rounded-3xl p-10 shadow-2xl animate-slide-in-right">
-              <LeadForm />
+            <div className="glass-dark rounded-3xl p-6 shadow-2xl md:p-8 lg:p-10">
+              <LeadForm title="Оставить заявку" />
             </div>
           </div>
         </div>

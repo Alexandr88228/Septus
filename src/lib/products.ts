@@ -1,6 +1,21 @@
 import fs from 'fs';
 import path from 'path';
 import mammoth from 'mammoth';
+import { toSlug } from './slug';
+
+export { toSlug } from './slug';
+
+/** Явные модели из Sanity — строки каталога и URL `/catalog/{brand}/{modelSlug}/`. */
+export type ProductCatalogVariant = {
+  modelSlug: string;
+  title: string;
+  users: number;
+  discharge: string;
+  dischargeLabel: string;
+  price: string;
+  capacity: string;
+  burstDischarge: string;
+};
 
 export interface Product {
   id: string;
@@ -10,6 +25,12 @@ export interface Product {
   description: string;
   price: string;
   priceValue: number;
+  pricePrefix?: string;
+  priceWas?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  /** Если задано в Sanity — только эти варианты в каталоге (без эвристики по коду). */
+  catalogVariants?: ProductCatalogVariant[];
   images: string[];
   features: string[];
   specs: Record<string, string>;
@@ -30,13 +51,6 @@ export interface Product {
 
 const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp'];
 const EXCLUDED_FOLDERS = new Set(['Логотипы']);
-
-const RU_TO_LAT: Record<string, string> = {
-  а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ё: 'e', ж: 'zh', з: 'z', и: 'i',
-  й: 'y', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r', с: 's', т: 't',
-  у: 'u', ф: 'f', х: 'h', ц: 'ts', ч: 'ch', ш: 'sh', щ: 'sch', ъ: '', ы: 'y', ь: '',
-  э: 'e', ю: 'yu', я: 'ya',
-};
 
 const NORMALIZED_SPEC_KEYS: Array<{ match: RegExp; label: string }> = [
   { match: /пользовател|чел/i, label: 'Количество пользователей' },
@@ -498,21 +512,6 @@ const CATALOG_REFERENCE: Record<string, CatalogReference> = {
     features: ['Сбалансированная модель', 'Для дома и дачи', 'Надежная работа в сезон'],
   }),
 };
-
-function toSlug(value: string): string {
-  const transliterated = value
-    .trim()
-    .toLowerCase()
-    .split('')
-    .map((char) => RU_TO_LAT[char] ?? char)
-    .join('');
-
-  return transliterated
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
-}
 
 function buildImageUrl(folder: string, file: string): string {
   return `/catalog-images/${toSlug(folder)}/${toSlug(path.parse(file).name)}.webp`;

@@ -8,16 +8,17 @@ const singleton = (S: Parameters<StructureResolver>[0], title: string, schemaTyp
 
 export const structure: StructureResolver = (S) =>
   S.list()
-    .title('Контент сайта')
+    .title('Септус — контент')
     .items([
       singleton(S, 'Главная страница', 'homePage', 'homePage'),
       S.divider(),
-      S.documentTypeListItem('product').title('Каталог товаров'),
-      S.documentTypeListItem('category').title('Категории'),
-      S.documentTypeListItem('priceItem').title('Цены'),
+      S.documentTypeListItem('product').title('Каталог — серии и модели'),
+      S.documentTypeListItem('caseStudy').title('Кейсы / монтажи'),
       S.documentTypeListItem('promotion').title('Акции'),
+      S.documentTypeListItem('category').title('Категории'),
+      S.documentTypeListItem('priceItem').title('Прайс (строки)'),
       S.documentTypeListItem('review').title('Отзывы'),
       S.divider(),
       singleton(S, 'Контакты', 'contacts', 'contacts'),
-      S.documentTypeListItem('seoSettings').title('SEO'),
+      S.documentTypeListItem('seoSettings').title('Глобальное SEO'),
     ]);

@@ -8,7 +8,7 @@ import YandexMetrika from '../components/YandexMetrika';
 import MobileStickyCta from '../components/MobileStickyCta';
 
 const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.septus.ru';
-const logoUrl = '/Logo.jpg';
+const logoUrl = '/logo.webp';
 const manrope = Manrope({
   subsets: ['latin', 'cyrillic'],
   display: 'swap',
@@ -24,8 +24,7 @@ export const metadata: Metadata = {
   },
   description: 'Монтаж септиков под ключ за 1 день. Бесплатный выезд инженера по СПб и ЛО, гарантия до 10 лет, прозрачная смета без скрытых доплат.',
   icons: {
-    icon: logoUrl,
-    shortcut: logoUrl,
+    icon: [{ url: '/icon', type: 'image/png' }],
     apple: logoUrl,
   },
   openGraph: {
@@ -70,7 +69,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ru">
       <head>
-        <link rel="icon" href={logoUrl} sizes="96x96" />
         <link rel="apple-touch-icon" href={logoUrl} />
         <Script id="local-business-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
       </head>
@@ -119,19 +117,16 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               </div>
 
               <div className="glass rounded-3xl p-8 hover-lift">
-                <p className="text-sm uppercase tracking-[0.3em] text-emerald-400 font-semibold">Карта покрытия</p>
-                <div className="mt-4 h-48 rounded-2xl bg-[#222d49]/70 backdrop-blur-sm border border-white/10 flex items-center justify-center text-slate-300 shadow-inner">
-                  <div className="text-center">
-                    <div className="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                      <svg className="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                    </div>
-                    <p className="text-sm font-medium">Весь СПб и вся Ленобласть</p>
-                    <p className="text-xs text-slate-400 mt-1">Выезд инженера по всем районам</p>
-                  </div>
-                </div>
+                <p className="text-sm uppercase tracking-[0.3em] text-[#84b827] font-semibold">Мы в соцсетях</p>
+                <p className="mt-4 text-slate-300 leading-relaxed">Новости и примеры работ — в группе ВКонтакте.</p>
+                <a
+                  href="https://vk.com/septusru"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-6 inline-flex items-center justify-center rounded-full bg-[#84b827] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#6d981f]"
+                >
+                  Группа ВКонтакте
+                </a>
               </div>
             </div>
           </div>
