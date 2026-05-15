@@ -1,28 +1,28 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { notFound, redirect } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import BrandModelGrid from '../../../components/BrandModelGrid';
 import CatalogBreadcrumbs from '../../../components/CatalogBreadcrumbs';
 import CatalogPageHero from '../../../components/CatalogPageHero';
-import { getCatalogProductBySlug, getCatalogProducts } from '../../../lib/catalog-data';
+import { getCatalogProducts } from '../../../lib/catalog-data';
 import {
+  collectCatalogBrandSegmentParams,
   expandProductToModels,
   getBrandDisplayName,
-  getLegacySeriesRedirectTarget,
   getUserCountsForBrand,
   groupProductsByBrandSlug,
-  slugifyBrand,
+  resolveCatalogBrandSegmentRedirect,
 } from '../../../lib/catalog-routing';
 
 export const dynamic = 'force-static';
 export const revalidate = 86400;
-export const dynamicParams = false;
+/** Новые slug из Sanity после сборки — редирект на лету, без 404 */
+export const dynamicParams = true;
 
 export async function generateStaticParams() {
   const products = await getCatalogProducts();
-  const brands = new Set(products.map((p) => slugifyBrand(p.brand)));
-  return Array.from(brands).map((brandSlug) => ({ brandSlug }));
+  return collectCatalogBrandSegmentParams(products);
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ brandSlug: string }> }): Promise<Metadata> {
@@ -45,6 +45,11 @@ export default async function BrandCatalogPage({ params }: { params: Promise<{ b
   const { brandSlug } = await params;
   const products = await getCatalogProducts();
   const groups = groupProductsByBrandSlug(products);
+
+  const legacyRedirect = resolveCatalogBrandSegmentRedirect(brandSlug, products);
+  if (legacyRedirect) {
+    permanentRedirect(legacyRedirect);
+  }
 
   if (groups.has(brandSlug)) {
     const brandProducts = groups.get(brandSlug)!;
@@ -134,12 +139,6 @@ export default async function BrandCatalogPage({ params }: { params: Promise<{ b
         </div>
       </main>
     );
-  }
-
-  const legacy = await getCatalogProductBySlug(brandSlug);
-  if (legacy) {
-    const target = getLegacySeriesRedirectTarget(legacy);
-    if (target) redirect(target);
   }
 
   notFound();

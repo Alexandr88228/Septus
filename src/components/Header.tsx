@@ -7,19 +7,20 @@ import { trackGoal } from '../lib/metrika';
 
 const logoSrc = '/logo.webp';
 
+/** Ссылки на бренд + якорь серии (старые /catalog/{series-slug}/ редиректят так же) */
 const septicMenu = [
-  { label: 'Евролос БИО', href: '/catalog/evrolos-bio' },
-  { label: 'Евролос ПРО', href: '/catalog/evrolos-pro' },
-  { label: 'Топас', href: '/catalog/topas' },
-  { label: 'Топас С', href: '/catalog/topas-s' },
-  { label: 'Юнилос Астра', href: '/catalog/yunilos-astra' },
-  { label: 'Биодевайс ПРО', href: '/catalog/biodevays-pro' },
-  { label: 'Биодевайс ГОСТ', href: '/catalog/biodevays-gost' },
-  { label: 'Гринлос', href: '/catalog/grinlos' },
-  { label: 'Волгарь', href: '/catalog/volgar' },
-  { label: 'Коловеси', href: '/catalog/kolovesi' },
-  { label: 'КИТ Био', href: '/catalog/kit-bio' },
-  { label: 'Аэробокс', href: '/catalog/aeroboks' },
+  { label: 'Евролос БИО', href: '/catalog/evrolos/#seriya-evrolos-bio' },
+  { label: 'Евролос ПРО', href: '/catalog/evrolos/#seriya-evrolos-pro' },
+  { label: 'Топас', href: '/catalog/topas/' },
+  { label: 'Топас С', href: '/catalog/topas/#seriya-topas-s' },
+  { label: 'Юнилос Астра', href: '/catalog/yunilos-astra/' },
+  { label: 'Биодевайс ПРО', href: '/catalog/biodevays/#seriya-biodevays-pro' },
+  { label: 'Биодевайс ГОСТ', href: '/catalog/biodevays/#seriya-biodevays-gost' },
+  { label: 'Гринлос', href: '/catalog/grinlos/' },
+  { label: 'Волгарь', href: '/catalog/volgar/' },
+  { label: 'Коловеси', href: '/catalog/kolovesi/' },
+  { label: 'КИТ Био', href: '/catalog/kit/#seriya-kit-bio' },
+  { label: 'Аэробокс', href: '/catalog/aeroboks/' },
 ];
 
 function TelegramIcon(props: SVGProps<SVGSVGElement>) {

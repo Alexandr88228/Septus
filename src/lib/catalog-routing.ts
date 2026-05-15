@@ -138,9 +138,45 @@ export function getModelsForBrandAndUsers(brandSlug: string, users: number, prod
   return rows.sort((a, b) => a.name.localeCompare(b.name, 'ru'));
 }
 
-/** Legacy /catalog/{productSlug}/ → /catalog/{brandSlug}/ when slugs differ */
-export function getLegacySeriesRedirectTarget(product: Product): string | null {
+/** Все сегменты для generateStaticParams: бренды + slug серий (старые URL). */
+export function collectCatalogBrandSegmentParams(products: Product[]): { brandSlug: string }[] {
+  const seen = new Set<string>();
+  const params: { brandSlug: string }[] = [];
+
+  const add = (slug: string) => {
+    const key = slug?.trim();
+    if (!key || seen.has(key)) return;
+    seen.add(key);
+    params.push({ brandSlug: key });
+  };
+
+  for (const p of products) {
+    add(slugifyBrand(p.brand));
+    add(p.slug);
+  }
+
+  return params;
+}
+
+/**
+ * Старый URL вида /catalog/evrolos-pro/ (slug серии, не бренда) → страница бренда с якорем на серию.
+ * null = сегмент уже валидный brandSlug, рендерим страницу.
+ */
+export function resolveCatalogBrandSegmentRedirect(segment: string, products: Product[]): string | null {
+  if (groupProductsByBrandSlug(products).has(segment)) return null;
+
+  const product = products.find((p) => p.slug === segment);
+  if (!product) return null;
+
   const brandSlug = slugifyBrand(product.brand);
-  if (product.slug === brandSlug) return null;
-  return `/catalog/${brandSlug}/`;
+  if (product.slug === brandSlug) {
+    return `/catalog/${brandSlug}/`;
+  }
+
+  return `/catalog/${brandSlug}/#seriya-${product.slug}`;
+}
+
+/** @deprecated используйте resolveCatalogBrandSegmentRedirect */
+export function getLegacySeriesRedirectTarget(product: Product): string | null {
+  return resolveCatalogBrandSegmentRedirect(product.slug, [product]);
 }
