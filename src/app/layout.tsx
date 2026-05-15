@@ -25,7 +25,8 @@ export const metadata: Metadata = {
   },
   description: 'Монтаж септиков под ключ за 1 день. Бесплатный выезд инженера по СПб и ЛО, гарантия до 10 лет, прозрачная смета без скрытых доплат.',
   icons: {
-    icon: [{ url: '/icon', type: 'image/png' }],
+    icon: [{ url: logoUrl, type: 'image/webp' }],
+    shortcut: logoUrl,
     apple: logoUrl,
   },
   openGraph: {

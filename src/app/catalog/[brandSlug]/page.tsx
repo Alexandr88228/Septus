@@ -2,7 +2,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import type { Metadata } from 'next';
+import BrandModelGrid from '../../../components/BrandModelGrid';
 import CatalogBreadcrumbs from '../../../components/CatalogBreadcrumbs';
+import CatalogPageHero from '../../../components/CatalogPageHero';
 import { getCatalogProductBySlug, getCatalogProducts } from '../../../lib/catalog-data';
 import {
   expandProductToModels,
@@ -63,13 +65,11 @@ export default async function BrandCatalogPage({ params }: { params: Promise<{ b
             />
           </div>
 
-          <div className="mx-auto max-w-4xl text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#84b827]">Производитель</p>
-            <h1 className="section-heading mt-3">{brandName}</h1>
-            <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-600 md:text-lg">
-              Выберите число пользователей или конкретную серию. На странице модели — цена, характеристики, фото и заявка на расчёт монтажа.
-            </p>
-          </div>
+          <CatalogPageHero
+            badge="Производитель"
+            title={brandName}
+            subtitle="Выберите число пользователей или конкретную модель. На карточке — цена, характеристики, фото и заявка на расчёт монтажа."
+          />
 
           <section className="mx-auto mt-12 max-w-3xl">
             <h2 className="text-center text-lg font-black text-slate-950">По количеству человек</h2>
@@ -107,29 +107,11 @@ export default async function BrandCatalogPage({ params }: { params: Promise<{ b
                       <h3 className="text-xl font-black text-slate-950">{product.name}</h3>
                       <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-slate-600">{product.description}</p>
                       <p className="mt-4 text-sm font-bold text-[#84b827]">Модели септиков</p>
-                      <ul className="mt-3 grid gap-2 text-sm">
-                        {models.slice(0, 8).map((m) => (
-                          <li key={m.modelSlug}>
-                            <Link href={`/catalog/${brandSlug}/${m.modelSlug}/`} className="font-semibold text-slate-800 underline-offset-2 hover:text-[#84b827] hover:underline">
-                              {m.name}
-                            </Link>
-                            <span className="text-slate-500"> — {m.price}</span>
-                          </li>
-                        ))}
-                        {models.length > 8 ? <li className="text-slate-500">… и другие конфигурации</li> : null}
-                      </ul>
-                      <div className="mt-auto pt-6">
-                        {models[0] ? (
-                          <Link
-                            href={`/catalog/${brandSlug}/${models[0].modelSlug}/`}
-                            className="btn-primary inline-flex w-full justify-center text-center"
-                          >
-                            Открыть модель
-                          </Link>
-                        ) : (
-                          <p className="text-center text-sm text-amber-800">Для этой серии не сгенерированы модели — проверьте поля в CMS или обратитесь к администратору.</p>
-                        )}
-                      </div>
+                      {models.length > 0 ? (
+                        <BrandModelGrid brandSlug={brandSlug} models={models} imageSrc={cover} imageAlt={product.name} />
+                      ) : (
+                        <p className="mt-3 text-center text-sm text-amber-800">Для этой серии не сгенерированы модели — проверьте поля в CMS.</p>
+                      )}
                     </div>
                   </article>
                 );
